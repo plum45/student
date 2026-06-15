@@ -161,7 +161,7 @@
 </head>
 <body class="w-full h-screen flex flex-col items-center justify-center relative overflow-hidden text-stone-800">
 
-    <!-- ปุ่มควบคุมเพลงเปียโนคลอเบาๆ อุ่นๆ -->
+    <!-- ปุ่มควบคุมเพลงควบคุมเสียงดนตรีจริงจาก Dropbox -->
     <button id="musicToggleBtn" class="fixed top-4 right-4 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md border border-amber-200 shadow-lg flex items-center justify-center text-xl z-50 transition-all hover:scale-105 active:scale-95 hidden">
         🔊
     </button>
@@ -177,7 +177,7 @@
     <!-- กล่องหลักในการแสดงผลตัวแอปพลิเคชัน -->
     <div class="w-full max-w-md px-4 flex flex-col items-center justify-center z-10 select-none">
         
-        <!-- หัวข้อหน้าจอที่จะเปลี่ยนไปตามด่านการเล่นของนักเรียน -->
+        <!-- Interactive Header with automatic context change -->
         <div id="greetingHeader" class="text-center mb-6 transition-all duration-800 ease-in-out relative z-10">
             <span id="badgeText" class="inline-block bg-white/80 backdrop-blur-sm border border-amber-200/80 text-amber-700 text-[10px] md:text-xs px-4 py-1.5 rounded-full font-bold tracking-wider shadow-sm uppercase mb-2">
                 To My Brilliant Students 🌻
@@ -186,7 +186,7 @@
             <p id="headerSubtitle" class="text-xs md:text-sm text-amber-900/80 mt-1.5 font-medium bg-white/40 inline-block px-3 py-1.5 rounded-full backdrop-blur-sm shadow-sm">มีกล่องของขวัญรอพวกเธอเปิดอยู่นะครับ 🎁</p>
         </div>
 
-        <!-- ด่านที่ 0: แอนิเมชันของขวัญ (Gift Box Lottie) -->
+        <!-- STAGE 0: LOTTIE INTRO (Gift Box) -->
         <div id="lottieIntro" class="flex flex-col items-center justify-center cursor-pointer transition-all duration-700 ease-in-out z-20 hover:scale-105 relative w-full h-[360px]">
             <dotlottie-wc src="https://lottie.host/ac8c161c-1bbb-415a-8cdd-b82faf28e26b/56ZrR4WlUq.lottie" style="width: 280px; height: 280px" autoplay loop></dotlottie-wc>
             <div class="absolute bottom-6 px-6 py-2.5 bg-white/95 backdrop-blur-md border-2 border-amber-300 rounded-full text-[#8c5230] font-bold handwritten animate-[pulseGlow_2.5s_infinite] flex items-center gap-2 shadow-xl hover:bg-amber-50">
@@ -194,7 +194,7 @@
             </div>
         </div>
 
-        <!-- ด่านที่ 1 & 2: ซองจดหมายและสติกเกอร์หัวใจ -->
+        <!-- STAGE 1 & 2: THE ENVELOPE -->
         <div class="perspective-container w-full flex items-center justify-center h-[340px] stage-transition relative z-10 hidden opacity-0 scale-90" id="envelopeSection">
             <div id="envelope" class="envelope w-[340px] h-[220px] rounded-b-xl cursor-pointer flex items-center justify-center hover:shadow-[0_25px_50px_rgba(160,125,95,0.5)]">
                 
@@ -203,7 +203,7 @@
                     <div class="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/15 to-transparent"></div>
                 </div>
 
-                <!-- จดหมายกระดาษพรีวิวจำลองภายในซอง -->
+                <!-- Fake peek letter mockup -->
                 <div id="dummyLetter" class="dummy-letter absolute bottom-2 left-3 right-3 h-[190px] rounded-t-md shadow-inner z-10 border border-amber-100/50 flex flex-col items-center justify-center p-4">
                     <div class="w-full h-1 bg-amber-200/40 my-1"></div>
                     <div class="w-2/3 h-1 bg-amber-200/40 my-1"></div>
@@ -213,7 +213,7 @@
                 <div class="envelope-front-right absolute top-0 right-0 w-0 h-0 z-20"></div>
                 <div class="envelope-front-bottom absolute bottom-0 left-0 w-0 h-0 z-20 rounded-b-xl"></div>
 
-                <!-- ตราครั่งหัวใจขี้ผึ้งสีแดงหรูหรา -->
+                <!-- Wax Seal -->
                 <div id="waxSeal" class="absolute w-14 h-14 bg-gradient-to-br from-red-500 to-rose-700 rounded-full shadow-[0_5px_15px_rgba(225,29,72,0.5)] z-40 flex items-center justify-center cursor-pointer border-[3px] border-[#e83e60] transition-transform duration-300 hover:scale-110">
                     <span class="text-white text-2xl filter drop-shadow-md relative z-10">❤️</span>
                     <div class="absolute inset-0 rounded-full bg-white/20 blur-[2px]"></div>
@@ -222,15 +222,15 @@
             </div>
         </div>
 
-        <!-- ด่านที่ 2.7: ห้องสะท้อนตัวตน (Star Reflection chamber) -->
+        <!-- STAGE 2.7: REFLECTIVE MAGIC STARS (Interactive Challenge with scroll) -->
         <div id="reflectionChamber" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[345px] h-[80vh] max-h-[560px] flex flex-col justify-between items-center stage-transition opacity-0 scale-95 relative z-20">
             <p class="text-sm text-center text-amber-950 font-semibold mb-3 w-full bg-amber-100/55 px-4 py-2.5 rounded-2xl backdrop-blur-sm border border-amber-200/60 handwritten shadow-sm">
                 ลองจิ้มเลือก <span class="text-rose-600 font-bold">"พลังวิเศษประจำตัว"</span> ที่พวกเธอชอบใช้ในห้องเรียนของครูที่สุดดูสิ... 💫
             </p>
 
-            <!-- รายชื่อพลังวิเศษทั้ง 5 รูปแบบที่พวกเธอสามารถเลือกอ่านได้ -->
+            <!-- Scrollable container to prevent overflow on small screens -->
             <div id="starCardsList" class="w-full flex-1 overflow-y-auto pr-1 space-y-2 mb-3 custom-scrollbar">
-                <!-- ตัวเลือกที่ 1 (รอยยิ้มและพลังบวก) -->
+                <!-- Choice 1 (รอยยิ้มและพลังบวก) -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="smile">
                     <div class="text-3xl bg-amber-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">😊</div>
                     <div class="text-left flex-1 text-no-squeeze">
@@ -238,7 +238,7 @@
                         <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่ทำให้ห้องเรียนดูมีชีวิตชีวาขึ้น</p>
                     </div>
                 </div>
-                <!-- ตัวเลือกที่ 2 (ความกล้าแสดงออก) -->
+                <!-- Choice 2 (ความกล้าแสดงออก) -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="brave">
                     <div class="text-3xl bg-rose-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">⚡</div>
                     <div class="text-left flex-1 text-no-squeeze">
@@ -246,7 +246,7 @@
                         <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่กล้าพูด กล้าถาม และกล้าลอง</p>
                     </div>
                 </div>
-                <!-- ตัวเลือกที่ 3 (ความใจดีและใส่ใจคนรอบข้าง) -->
+                <!-- Choice 3 (ความใจดีและใส่ใจคนรอบข้าง) -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="warm">
                     <div class="text-3xl bg-blue-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">🧸</div>
                     <div class="text-left flex-1 text-no-squeeze">
@@ -254,7 +254,7 @@
                         <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่คอยช่วยเหลือคนอื่นอยู่เสมอ</p>
                     </div>
                 </div>
-                <!-- ตัวเลือกที่ 4 (ความเงียบและความเรียบง่าย) -->
+                <!-- Choice 4 (ความเงียบและความเรียบง่าย) -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="quiet">
                     <div class="text-3xl bg-stone-100/75 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">🌙</div>
                     <div class="text-left flex-1 text-no-squeeze">
@@ -262,7 +262,7 @@
                         <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่อาจไม่ได้พูดมาก แต่ตั้งใจอยู่เสมอ</p>
                     </div>
                 </div>
-                <!-- ตัวเลือกที่ 5 (ความคิดสร้างสรรค์) -->
+                <!-- Choice 5 (ความคิดสร้างสรรค์) -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="creative">
                     <div class="text-3xl bg-purple-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">🎨</div>
                     <div class="text-left flex-1 text-no-squeeze">
@@ -272,20 +272,20 @@
                 </div>
             </div>
 
-            <!-- กล่องแสดงถ้อยคำขอบคุณและชื่นชมสะท้อนภาพลักษณ์ของนักเรียนแบบเฉพาะตัว -->
+            <!-- Personalized Mini Feedback Card -->
             <div id="miniFeedback" class="w-full paper-texture border-2 border-amber-200 rounded-2xl p-4 mb-4 text-center shadow-sm hidden opacity-0 transform translate-y-4 transition-all duration-700">
                 <span class="text-2xl" id="feedbackIcon">⭐</span>
                 <h5 class="text-base font-bold text-amber-950 mt-1 mb-1 handwritten" id="feedbackTitle">พลังของพวกเธอ</h5>
                 <p class="text-[13px] text-stone-700 leading-relaxed handwritten text-left px-1 max-h-[120px] overflow-y-auto custom-scrollbar" id="feedbackText">ความสุขของครูคือความสำเร็จของพวกเธอนะ...</p>
             </div>
 
-            <!-- ปุ่มปลดล็อกเข้าสู่จดหมายอวยพรร่วมแสนวิเศษ -->
+            <!-- Trigger Button for final card (Shows after a choice is made) -->
             <button id="unlockBlessingBtn" class="hidden w-full py-3 bg-gradient-to-r from-amber-500 via-rose-400 to-amber-500 text-white font-bold rounded-full shadow-lg border-2 border-white hover:scale-105 transition-all duration-300 handwritten flex items-center justify-center gap-2 pulse-glow text-sm">
                 <span>💌</span> เปิดหน้าการ์ดคำอวยพรใบสุดท้าย
             </button>
         </div>
 
-        <!-- ด่านที่ 2.9: แอนิเมชัน Lottie เปลี่ยนผ่านเพื่อเตรียมความรู้สึก (Stage 2.9) -->
+        <!-- STAGE 2.9: MAGICAL CELEBRATION TRANSITION (Lottie Animation) -->
         <div id="transitionChamber" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[345px] h-[80vh] max-h-[560px] flex flex-col justify-center items-center stage-transition opacity-0 scale-95 relative z-20">
             <div class="relative w-[300px] h-[260px] flex items-center justify-center">
                 <dotlottie-wc src="https://lottie.host/82b55941-8f10-4b09-b1ba-e783d56d9b35/VdqHarJ7ZZ.lottie" style="width: 250px; height: 250px" autoplay loop></dotlottie-wc>
@@ -300,7 +300,7 @@
             </button>
         </div>
 
-        <!-- ด่านที่ 3: แผ่นการ์ดใบอวยพรร่วมสุดท้ายแสนศักดิ์สิทธิ์และสวยงาม -->
+        <!-- STAGE 3: BLESSING CARD -->
         <div id="blessingCard" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[345px] h-[80vh] max-h-[560px] paper-texture rounded-2xl shadow-[0_25px_60px_rgba(120,80,50,0.3)] border-[10px] border-white p-5 flex flex-col justify-between items-center text-center opacity-0 z-25 transition-all duration-1000">
             
             <div class="absolute top-2 left-2 text-amber-300/60 text-4xl font-serif">"</div>
@@ -312,22 +312,22 @@
                 <span class="text-3xl animate-[bounce_2s_infinite_300ms]">🌻</span>
             </div>
 
-            <!-- กล่องแสดงข้อความและ scrollbar คุมความสูงป้องกันการทับซ้อนบีบอัด -->
-            <div class="w-full flex-1 flex flex-col justify-center z-10 mt-2 overflow-y-auto custom-scrollbar pr-1.5 my-2">
-                <!-- หัวข้อการ์ดใบสุดท้าย -->
+            <!-- Card Content with custom scrollbar -->
+            <div class="w-full flex-grow flex flex-col justify-center z-10 mt-2 overflow-y-auto custom-scrollbar pr-1.5 my-2">
+                <!-- Dynamic Card Heading -->
                 <h3 id="blessingCardTitle" class="text-[18px] font-bold text-[#8c5230] border-b-[2px] border-dashed border-amber-300 pb-2 mb-3.5 handwritten relative w-full text-center">
                     คำอวยพรสุดพิเศษจากใจครู 🎁
                 </h3>
                 
-                <!-- กล่องอัปเดตคำอวยพรจริงและคำเตือนขำๆ สับเปลี่ยนโดยระบบ JS -->
+                <!-- Content Area: Toggled between Joke and Real through JavaScript -->
                 <div id="blessingCardContent" class="text-[#69564b] text-[14.5px] leading-[1.8] space-y-3 font-medium handwritten text-left px-1">
-                    <!-- ข้อความเริ่มต้นที่นี่จะถูกแทนที่ด้วยมุกตลกช่วงแรก -->
+                    <!-- Default initialized with a funny joke stage -->
                 </div>
             </div>
 
-            <!-- กล่องปุ่มฟังก์ชัน (ปุ่มเผยจดหมายอวยพรจริง / ปุ่มความลับ P.S.) -->
+            <!-- Dynamic Interactive Buttons (Joke Reveal Button vs Secret P.S. Button) -->
             <div id="blessingButtonsContainer" class="w-full flex flex-col items-center mt-2 z-20">
-                <!-- ตะขอปุ่มจะถูกเรนเดอร์สลับโหมดผ่าน JS -->
+                <!-- Will be dynamically updated to show either 'Reveal Real Blessing' or 'P.S. Secret' button -->
             </div>
 
             <div class="w-full mt-3 pt-2.5 border-t-[2px] border-dashed border-amber-200 flex flex-col items-center justify-center z-10">
@@ -336,7 +336,7 @@
         </div>
     </div>
 
-    <!-- ด่านที่ 2.5: จดหมายกางแบบ 3D (Centered 3D Unfolding Paper) -->
+    <!-- STAGE 2.5: CENTERED UNFOLDING 3D LETTER -->
     <div id="unfoldingLetter" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[340px] h-[180px] z-50 pointer-events-none opacity-0 stage-transition hidden" style="perspective: 2000px; transform-style: preserve-3d; transform-origin: center center;">
         <div id="paperContainer" class="w-full h-full flex flex-col justify-between transition-all duration-1000 ease-out relative" style="transform-style: preserve-3d; -webkit-transform-style: preserve-3d;">
             
@@ -349,7 +349,7 @@
                 </div>
             </div>
 
-            <!-- 2. พับส่วนกลาง (Middle section) เป็นฐานจดหมายหลัก -->
+            <!-- 2. MIDDLE SECTION -->
             <div id="foldMiddle" class="notebook-paper w-full h-[210px] px-6 py-4 flex flex-col justify-center shadow-md relative z-10" style="backface-visibility: hidden; -webkit-backface-visibility: hidden;">
                 <div class="paper-content-fade text-[#5c4d44] text-[12.5px] leading-[1.75] space-y-3 handwritten text-left font-medium border-l-2 border-red-400 pl-4 ml-6 overflow-y-auto custom-scrollbar max-h-[190px] pr-1">
                     <p class="indent-6">ขอบคุณทุกคนมากนะ ที่ช่วยกันทำให้การเรียนครั้งนี้ผ่านไปได้ด้วยดี</p>
@@ -357,12 +357,12 @@
                     <p class="indent-6">ครูอาจไม่ได้พูดบ่อย แต่ครูเห็นความตั้งใจของทุกคนเสมอ และก็ภูมิใจในพัฒนาการของแต่ละคนมาก</p>
                     <p class="indent-6">ขอบคุณสำหรับความร่วมมือ รอยยิ้ม เสียงหัวเราะ และเรื่องวุ่น ๆ เล็ก ๆ น้อย ๆ ที่ทำให้ห้องเรียนมีชีวิตชีวา 😊</p>
                 </div>
-                <!-- เงารอยต่อพับ -->
+                <!-- Crease shadows -->
                 <div class="absolute top-0 inset-x-0 h-[2px] bg-black/5 shadow-[0_1px_4px_rgba(0,0,0,0.05)]"></div>
                 <div class="absolute bottom-0 inset-x-0 h-[2px] bg-black/5 shadow-[0_-1px_4px_rgba(0,0,0,0.05)]"></div>
             </div>
 
-            <!-- 3. พับส่วนล่าง (Bottom fold) คลี่คว่ำลงด้านล่าง -->
+            <!-- 3. BOTTOM FOLD -->
             <div id="foldBottom" class="notebook-paper w-full h-[90px] rounded-b-xl border-t border-dashed border-amber-200 px-6 py-4 flex items-center justify-start transition-all duration-1000 cubic-bezier(0.25, 1, 0.5, 1) origin-top" style="transform: rotateX(120deg); backface-visibility: hidden; -webkit-backface-visibility: hidden;">
                 <div class="paper-content-fade w-full flex justify-between items-center border-l-2 border-red-400 pl-4 ml-6">
                     <p class="text-amber-700 font-bold text-left handwritten text-[14.5px] leading-relaxed">
@@ -372,19 +372,19 @@
             </div>
         </div>
         
-        <!-- ปุ่มกางส่งรักกลับและไปมินิเกมด่านต่อไป -->
+        <!-- Send Magic Energy Button -->
         <button id="sendEnergyBtn" class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-gradient-to-r from-rose-400 to-amber-500 hover:from-rose-500 hover:to-amber-600 text-white font-bold rounded-full shadow-lg border-2 border-white hover:scale-105 transition-all duration-300 handwritten flex items-center gap-2 pointer-events-auto pulse-glow opacity-0 translate-y-4">
             <span>✨</span> ส่งรักกลับครู & ไปต่อกันเลย
         </button>
     </div>
 
-    <!-- แผ่นกระจกเบลอเน้นโฟกัสสำหรับจดหมายแผ่นพับ 3D -->
+    <!-- MAGIC BACKDROP OVERLAY FOR FOCUS -->
     <div id="overlayBackdrop" class="fixed inset-0 bg-stone-950/50 backdrop-blur-md z-40 transition-opacity duration-1000 opacity-0 pointer-events-none"></div>
 
-    <!-- หน้าต่างป๊อปอัปความลับสุดท้ายยามกดปุ่ม P.S. พร้อมฝนพลูหัวใจหลากสี -->
+    <!-- OVERLAY SECRET MESSAGE -->
     <div id="secretOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-md z-50 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-500">
         <div class="w-[320px] max-h-[85vh] bg-white rounded-3xl p-8 text-center shadow-[0_0_50px_rgba(255,100,150,0.4)] relative border-[6px] border-rose-100 overflow-y-auto custom-scrollbar">
-            <!-- ปุ่มกากบาทปิดโมดอล -->
+            <!-- Close button -->
             <button id="closeSecretBtn" class="absolute top-3 right-4 text-gray-400 hover:text-rose-500 text-2xl font-bold">&times;</button>
             
             <div class="text-5xl mb-4 animate-bounce">🥺💖</div>
@@ -400,7 +400,7 @@
     </div>
 
     <script>
-        // ประกาศตัวแปรเชื่อมโยง DOM ทั้งหมด
+        // DOM Elements
         const lottieIntro = document.getElementById('lottieIntro');
         const headerSubtitle = document.getElementById('headerSubtitle');
         const mainTitle = document.getElementById('mainTitle');
@@ -427,6 +427,7 @@
         const feedbackText = document.getElementById('feedbackText');
         const unlockBlessingBtn = document.getElementById('unlockBlessingBtn');
         
+        // Stage 2.9 Elements (New Lottie Transition Stage)
         const transitionChamber = document.getElementById('transitionChamber');
         const goToBlessingBtn = document.getElementById('goToBlessingBtn');
         
@@ -448,7 +449,32 @@
         let selectedStarType = "";
         let autoTransitionTimeout;
 
-        // คำชื่นชมแบบย่อสำหรับแสดงผลในการ์ดเลือกพลังสะท้อนตัวตน
+        // [MUSIC UPGRADE] ดึงไฟล์เพลงตรงจาก Dropbox และปรับระดับความดัง Volume = 0.15 ให้เสียงคลอเบาๆ
+        const bgMusic = new Audio("https://www.dropbox.com/scl/fi/yiy23fsnrlf9wipd5j4n7/starlost.-PURPEECH.mp3?rlkey=l5xipmlxispppbxtt87eey7fv&st=uqzdtw9a&dl=1");
+        bgMusic.loop = true; 
+        bgMusic.volume = 0.15; // ระดับความเบาคลอนุ่มลึก ฟังสบายอบอุ่นใจ
+        let isMusicPlaying = false;
+
+        function startMusic() {
+            if (!isMusicPlaying) {
+                bgMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicToggleBtn.innerText = '🔊';
+                    musicToggleBtn.style.opacity = '1';
+                }).catch(err => {
+                    console.log("Audio play blocked by browser policies: ", err);
+                });
+            }
+        }
+
+        function stopMusic() {
+            bgMusic.pause();
+            isMusicPlaying = false;
+            musicToggleBtn.innerText = '🔇';
+            musicToggleBtn.style.opacity = '0.6';
+        }
+
+        // Custom brief feedback shown in the selection screen
         const feedbackDetails = {
             smile: {
                 icon: '☀️',
@@ -513,129 +539,6 @@
         window.addEventListener('resize', adjustLayoutScales);
         adjustLayoutScales();
 
-        // -------------------------------------------------------------
-        // ระบบสร้างคอร์ดเสียงเปียโนนุ่มละมุน (Pure Web Audio API)
-        // -------------------------------------------------------------
-        class WarmCozyPiano {
-            constructor() {
-                this.ctx = null;
-                this.isPlaying = false;
-                this.currentChord = 0;
-                this.step = 0;
-                this.intervalId = null;
-                
-                this.chords = [
-                    [130.81, 196.00, 246.94, 293.66, 329.63, 392.00],
-                    [174.61, 261.63, 329.63, 392.00, 440.00, 523.25],
-                    [196.00, 293.66, 392.00, 493.88, 587.33, 659.25],
-                    [110.00, 220.00, 329.63, 392.00, 523.25, 659.25]
-                ];
-                this.pattern = [0, 2, 4, 3, 5, 4, 1, 3];
-            }
-
-            init() {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                this.ctx = new AudioContext();
-            }
-
-            start() {
-                if (this.isPlaying) return;
-                if (!this.ctx) this.init();
-                
-                if (this.ctx && this.ctx.state === 'suspended') {
-                    this.ctx.resume();
-                }
-                
-                this.isPlaying = true;
-                this.step = 0;
-                this.currentChord = 0;
-                this.playStep();
-                this.intervalId = setInterval(() => this.playStep(), 420);
-            }
-
-            stop() {
-                this.isPlaying = false;
-                if (this.intervalId) {
-                    clearInterval(this.intervalId);
-                    this.intervalId = null;
-                }
-            }
-
-            playStep() {
-                if (!this.isPlaying || !this.ctx) return;
-                const now = this.ctx.currentTime;
-                const chord = this.chords[this.currentChord];
-                const noteIndex = this.pattern[this.step % this.pattern.length];
-                const freq = chord[noteIndex % chord.length];
-
-                const timeOffset = Math.random() * 0.02;
-                if (Math.random() > 0.08) { 
-                    this.triggerNote(freq, now + timeOffset, 0.45);
-                }
-
-                if (this.step % this.pattern.length === 0) {
-                    this.triggerNote(chord[0] / 2, now, 0.8, true); 
-                }
-
-                this.step++;
-                if (this.step % this.pattern.length === 0) {
-                    this.currentChord = (this.currentChord + 1) % this.chords.length;
-                }
-            }
-
-            triggerNote(freq, time, volumeMult = 1.0, isBass = false) {
-                const oscTriangle = this.ctx.createOscillator();
-                const oscSine = this.ctx.createOscillator();
-                const filter = this.ctx.createBiquadFilter();
-                const gainNode = this.ctx.createGain();
-
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(isBass ? 250 : 750, time);
-                filter.Q.setValueAtTime(1.2, time);
-
-                oscTriangle.type = 'triangle';
-                oscSine.type = 'sine';
-
-                oscTriangle.frequency.setValueAtTime(freq, time);
-                oscSine.frequency.setValueAtTime(freq * 1.002, time);
-
-                const gain = gainNode.gain;
-                gain.setValueAtTime(0, time);
-                gain.linearRampToValueAtTime(0.06 * volumeMult, time + 0.04); 
-                gain.exponentialRampToValueAtTime(0.0001, time + (isBass ? 4.0 : 2.5)); 
-
-                oscTriangle.connect(filter);
-                oscSine.connect(filter);
-                filter.connect(gainNode);
-                gainNode.connect(this.ctx.destination);
-
-                oscTriangle.start(time);
-                oscSine.start(time);
-                
-                const duration = isBass ? 4.1 : 2.6;
-                oscTriangle.stop(time + duration);
-                oscSine.stop(time + duration);
-            }
-        }
-
-        const pianoSynth = new WarmCozyPiano();
-
-        musicToggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (pianoSynth.isPlaying) {
-                pianoSynth.stop();
-                musicToggleBtn.innerText = '🔇';
-                musicToggleBtn.style.opacity = '0.6';
-            } else {
-                pianoSynth.start();
-                musicToggleBtn.innerText = '🔊';
-                musicToggleBtn.style.opacity = '1';
-                spawnPremiumParticles(window.innerWidth - 30, 40, false);
-            }
-        });
-
-        // สร้างฝูงหิ่งห้อยรอบขอบจอ
         function initFireflies() {
             for (let i = 0; i < 22; i++) {
                 const p = document.createElement('div');
@@ -667,14 +570,15 @@
         document.head.appendChild(styleSheet);
         initFireflies();
 
-        // เล่นเอฟเฟกต์กระดิ่งเสียงใสพวยพุ่งพาสเทล
+        // เสียงกระดิ่งวิ้งวับเมื่อคลิกหรือเกิดอนิเมชันเปิด (สังเคราะห์จาก Web Audio API)
         function playChimeChord(chordType = 'major') {
             try {
-                if (!pianoSynth.ctx) pianoSynth.init();
-                const ctx = pianoSynth.ctx;
-                if (!ctx) return;
-                
+                // สร้าง Audio Context สำรองหากเบราว์เซอร์ต้องการปลดล็อกใช้งาน Web Audio API
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
                 const now = ctx.currentTime;
+                
                 let freqs = [523.25, 659.25, 783.99, 1046.50]; 
                 if (chordType === 'secret') {
                     freqs = [587.33, 739.99, 880.00, 1174.66, 1479.98]; 
@@ -701,7 +605,7 @@
             } catch(e) {}
         }
 
-        // เอฟเฟกต์การยิงพลุไอคอนหัวใจและประกายพาสเทลลอยตกสั่นไหว
+        // เอฟเฟกต์พลุหัวใจพวยพุ่งพาสเทล
         function spawnPremiumParticles(clientX, clientY, isLarge = false) {
             const count = isLarge ? 24 : 10;
             const symbols = ['❤️', '💖', '💝', '✨', '🌸', '💫', '🌻', '🎈'];
@@ -740,7 +644,8 @@
         lottieIntro.addEventListener('click', (e) => {
             e.stopPropagation();
             
-            pianoSynth.start();
+            // เริ่มบรรเลงเพลงจริงที่ส่งมาเมื่อเเตะแกะกล่องครั้งแรก
+            startMusic(); 
             musicToggleBtn.classList.remove('hidden'); 
             
             playChimeChord('star');
@@ -1006,8 +911,10 @@
                 adjustLayoutScales(); 
             }, 250);
 
-            // บรรจุบทความซึ้งจากครู
+            // Swap Title
             blessingCardTitle.innerHTML = "คำอวยพรสุดพิเศษแด่พวกเธอทุกคน 🤍";
+
+            // Inject the beautiful emotional thank you message provided by the user
             blessingCardContent.innerHTML = finalUniversalBlessingText;
 
             // สลับเป็นปุ่มลับบอกรักขำๆ ด้านล่าง
