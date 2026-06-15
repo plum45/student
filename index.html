@@ -13,7 +13,8 @@
             font-family: 'Prompt', sans-serif;
             background: radial-gradient(circle at 50% 30%, #fffbf2 0%, #fbe6d4 40%, #e8b099 100%);
             overflow: hidden;
-            touch-action: none;
+            /* ปลดล็อกให้สามารถลากนิ้วเลื่อนสไลด์และคลิกสัมผัสได้อย่างอิสระบน iPad/Mobile */
+            touch-action: manipulation;
         }
         .handwritten {
             font-family: 'Itim', cursive;
@@ -81,6 +82,13 @@
         }
         .is-unfolded .paper-content-fade {
             opacity: 1;
+        }
+
+        /* [UPGRADE] คลาสควบคุมการเลื่อนนิ้วสไลด์สำหรับ iPad & iOS */
+        .scrollable-area {
+            overflow-y: auto !important;
+            touch-action: pan-y !important;
+            -webkit-overflow-scrolling: touch !important; /* เปิดระบบเลื่อนสไลด์แบบสมูทลื่นไหลบน iPad */
         }
 
         /* ละอองเอฟเฟกต์หัวใจตอนกดหน้าจอ */
@@ -159,14 +167,14 @@
         }
     </style>
 </head>
-<body class="w-full h-screen flex flex-col items-center justify-center relative overflow-hidden text-stone-800">
+<body class="w-screen h-screen flex items-center justify-center relative overflow-hidden text-stone-800">
 
     <!-- ปุ่มควบคุมเพลงควบคุมเสียงดนตรีจริงจาก Dropbox -->
     <button id="musicToggleBtn" class="fixed top-4 right-4 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md border border-amber-200 shadow-lg flex items-center justify-center text-xl z-50 transition-all hover:scale-105 active:scale-95 hidden">
         🔊
     </button>
 
-    <!-- แสงสีส้มนวลอบอุ่นตกกระทบขอบจอเสริมบรรยากาศ -->
+    <!-- แสงสีส้มนวลอบอุ่นตกกระทบขอบจอเสริมบรรยากาศ (อยู่นอก Container เพื่อให้เต็มขอบจอแท็บเล็ต) -->
     <div class="absolute w-[60vw] h-[60vw] bg-rose-200/40 rounded-full filter blur-[110px] -top-20 -left-10 pointer-events-none mix-blend-multiply"></div>
     <div class="absolute w-[70vw] h-[70vw] bg-amber-300/30 rounded-full filter blur-[130px] -bottom-20 -right-20 pointer-events-none mix-blend-multiply"></div>
     <div class="absolute w-[45vw] h-[45vw] bg-white/60 rounded-full filter blur-[90px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none mix-blend-overlay"></div>
@@ -174,21 +182,24 @@
     <!-- กลุ่มหิ่งห้อยและประกายฝุ่นเรืองแสงลอยระยิบระยับ -->
     <div class="absolute inset-0 pointer-events-none opacity-80 z-0" id="particleContainer"></div>
 
-    <!-- กล่องหลักในการแสดงผลตัวแอปพลิเคชัน -->
-    <div class="w-full max-w-md px-4 flex flex-col items-center justify-center z-10 select-none">
+
+    <!-- -------------------------------------------------------------------------------- -->
+    <!-- ASPECT-RATIO SAFE BOX CONTAINER (กล่องกุมสัดส่วน 100% ป้องกันหน้าพังบนแท็บเล็ต/คอมพิวเตอร์) -->
+    <!-- -------------------------------------------------------------------------------- -->
+    <div id="appContainer" class="w-[360px] h-[640px] relative flex flex-col items-center justify-center origin-center shrink-0 z-10">
         
         <!-- Interactive Header with automatic context change -->
-        <div id="greetingHeader" class="text-center mb-6 transition-all duration-800 ease-in-out relative z-10">
-            <span id="badgeText" class="inline-block bg-white/80 backdrop-blur-sm border border-amber-200/80 text-amber-700 text-[10px] md:text-xs px-4 py-1.5 rounded-full font-bold tracking-wider shadow-sm uppercase mb-2">
+        <div id="greetingHeader" class="text-center mb-6 w-full px-4 transition-all duration-800 ease-in-out relative z-10">
+            <span id="badgeText" class="inline-block bg-white/80 backdrop-blur-sm border border-amber-200/80 text-amber-700 text-[10px] px-4 py-1.5 rounded-full font-bold tracking-wider shadow-sm uppercase mb-2">
                 To My Brilliant Students 🌻
             </span>
-            <h1 id="mainTitle" class="text-2xl md:text-3xl font-bold text-amber-950 mt-1 handwritten drop-shadow-md">แด่... นักเรียนคนสำคัญของครู</h1>
-            <p id="headerSubtitle" class="text-xs md:text-sm text-amber-900/80 mt-1.5 font-medium bg-white/40 inline-block px-3 py-1.5 rounded-full backdrop-blur-sm shadow-sm">มีกล่องของขวัญรอพวกเธอเปิดอยู่นะครับ 🎁</p>
+            <h1 id="mainTitle" class="text-2xl font-bold text-amber-950 mt-1 handwritten drop-shadow-md">แด่... นักเรียนคนสำคัญของครู</h1>
+            <p id="headerSubtitle" class="text-xs text-amber-900/80 mt-1.5 font-medium bg-white/40 inline-block px-3 py-1.5 rounded-full backdrop-blur-sm shadow-sm">มีกล่องของขวัญรอพวกเธอเปิดอยู่นะครับ 🎁</p>
         </div>
 
         <!-- STAGE 0: LOTTIE INTRO (Gift Box) -->
         <div id="lottieIntro" class="flex flex-col items-center justify-center cursor-pointer transition-all duration-700 ease-in-out z-20 hover:scale-105 relative w-full h-[360px]">
-            <dotlottie-wc src="https://lottie.host/ac8c161c-1bbb-415a-8cdd-b82faf28e26b/56ZrR4WlUq.lottie" style="width: 280px; height: 280px" autoplay loop></dotlottie-wc>
+            <dotlottie-wc src="https://lottie.host/ac8c161c-1bbb-415a-8cdd-b82faf28e26b/56ZrR4WlUq.lottie" style="width: 260px; height: 260px" autoplay loop></dotlottie-wc>
             <div class="absolute bottom-6 px-6 py-2.5 bg-white/95 backdrop-blur-md border-2 border-amber-300 rounded-full text-[#8c5230] font-bold handwritten animate-[pulseGlow_2.5s_infinite] flex items-center gap-2 shadow-xl hover:bg-amber-50">
                 <span class="text-xl">👆</span> กดเพื่อเปิดแกะของขวัญกันเลย!
             </div>
@@ -222,15 +233,15 @@
             </div>
         </div>
 
-        <!-- STAGE 2.7: REFLECTIVE MAGIC STARS (Interactive Challenge with scroll) -->
-        <div id="reflectionChamber" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[345px] h-[80vh] max-h-[560px] flex flex-col justify-between items-center stage-transition opacity-0 scale-95 relative z-20">
-            <p class="text-sm text-center text-amber-950 font-semibold mb-3 w-full bg-amber-100/55 px-4 py-2.5 rounded-2xl backdrop-blur-sm border border-amber-200/60 handwritten shadow-sm">
+        <!-- STAGE 2.7: REFLECTIVE MAGIC STARS (Interactive Challenge) -->
+        <div id="reflectionChamber" class="hidden absolute inset-0 flex flex-col justify-between items-center stage-transition opacity-0 scale-95 z-20 px-2 py-4">
+            <p class="text-sm text-center text-amber-950 font-semibold mb-2.5 w-full bg-amber-100/55 px-4 py-2.5 rounded-2xl backdrop-blur-sm border border-amber-200/60 handwritten shadow-sm">
                 ลองจิ้มเลือก <span class="text-rose-600 font-bold">"พลังวิเศษประจำตัว"</span> ที่พวกเธอชอบใช้ในห้องเรียนของครูที่สุดดูสิ... 💫
             </p>
 
-            <!-- Scrollable container to prevent overflow on small screens -->
-            <div id="starCardsList" class="w-full flex-1 overflow-y-auto pr-1 space-y-2 mb-3 custom-scrollbar">
-                <!-- Choice 1 (รอยยิ้มและพลังบวก) -->
+            <!-- Star Cards List inside Safe Box Container -->
+            <div id="starCardsList" class="w-full flex-1 overflow-y-auto pr-1 space-y-2 mb-3.5 custom-scrollbar scrollable-area">
+                <!-- Choice 1 -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="smile">
                     <div class="text-3xl bg-amber-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">😊</div>
                     <div class="text-left flex-1 text-no-squeeze">
@@ -238,7 +249,7 @@
                         <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่ทำให้ห้องเรียนดูมีชีวิตชีวาขึ้น</p>
                     </div>
                 </div>
-                <!-- Choice 2 (ความกล้าแสดงออก) -->
+                <!-- Choice 2 -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="brave">
                     <div class="text-3xl bg-rose-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">⚡</div>
                     <div class="text-left flex-1 text-no-squeeze">
@@ -246,23 +257,23 @@
                         <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่กล้าพูด กล้าถาม และกล้าลอง</p>
                     </div>
                 </div>
-                <!-- Choice 3 (ความใจดีและใส่ใจคนรอบข้าง) -->
+                <!-- Choice 3 -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="warm">
                     <div class="text-3xl bg-blue-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">🧸</div>
                     <div class="text-left flex-1 text-no-squeeze">
-                        <h4 class="font-bold text-amber-950 text-sm handwritten">ความใจดีและใส่ใจคนรอบข้าง</h4>
+                        <h4 class="font-bold text-amber-950 text-sm handwritten">ความใจดีและใส่ใจเพื่อน</h4>
                         <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่คอยช่วยเหลือคนอื่นอยู่เสมอ</p>
                     </div>
                 </div>
-                <!-- Choice 4 (ความเงียบและความเรียบง่าย) -->
+                <!-- Choice 4 -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="quiet">
                     <div class="text-3xl bg-stone-100/75 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">🌙</div>
                     <div class="text-left flex-1 text-no-squeeze">
-                        <h4 class="font-bold text-amber-950 text-sm handwritten">ความเงียบและความเรียบง่าย</h4>
+                        <h4 class="font-bold text-amber-950 text-sm handwritten">ความเงียบและเรียบง่าย</h4>
                         <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่อาจไม่ได้พูดมาก แต่ตั้งใจอยู่เสมอ</p>
                     </div>
                 </div>
-                <!-- Choice 5 (ความคิดสร้างสรรค์) -->
+                <!-- Choice 5 -->
                 <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="creative">
                     <div class="text-3xl bg-purple-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner">🎨</div>
                     <div class="text-left flex-1 text-no-squeeze">
@@ -273,10 +284,10 @@
             </div>
 
             <!-- Personalized Mini Feedback Card -->
-            <div id="miniFeedback" class="w-full paper-texture border-2 border-amber-200 rounded-2xl p-4 mb-4 text-center shadow-sm hidden opacity-0 transform translate-y-4 transition-all duration-700">
+            <div id="miniFeedback" class="w-full paper-texture border-2 border-amber-200 rounded-2xl p-4 mb-3 text-center shadow-sm hidden opacity-0 transform translate-y-4 transition-all duration-700">
                 <span class="text-2xl" id="feedbackIcon">⭐</span>
                 <h5 class="text-base font-bold text-amber-950 mt-1 mb-1 handwritten" id="feedbackTitle">พลังของพวกเธอ</h5>
-                <p class="text-[13px] text-stone-700 leading-relaxed handwritten text-left px-1 max-h-[120px] overflow-y-auto custom-scrollbar" id="feedbackText">ความสุขของครูคือความสำเร็จของพวกเธอนะ...</p>
+                <p class="text-[13px] text-stone-700 leading-relaxed handwritten text-left px-1 max-h-[110px] custom-scrollbar scrollable-area" id="feedbackText">ความสุขของครูคือความสำเร็จของพวกเธอนะ...</p>
             </div>
 
             <!-- Trigger Button for final card (Shows after a choice is made) -->
@@ -286,7 +297,7 @@
         </div>
 
         <!-- STAGE 2.9: MAGICAL CELEBRATION TRANSITION (Lottie Animation) -->
-        <div id="transitionChamber" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[345px] h-[80vh] max-h-[560px] flex flex-col justify-center items-center stage-transition opacity-0 scale-95 relative z-20">
+        <div id="transitionChamber" class="hidden absolute inset-0 flex flex-col justify-center items-center stage-transition opacity-0 scale-95 z-20 px-2 py-4">
             <div class="relative w-[300px] h-[260px] flex items-center justify-center">
                 <dotlottie-wc src="https://lottie.host/82b55941-8f10-4b09-b1ba-e783d56d9b35/VdqHarJ7ZZ.lottie" style="width: 250px; height: 250px" autoplay loop></dotlottie-wc>
             </div>
@@ -301,7 +312,7 @@
         </div>
 
         <!-- STAGE 3: BLESSING CARD -->
-        <div id="blessingCard" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[345px] h-[80vh] max-h-[560px] paper-texture rounded-2xl shadow-[0_25px_60px_rgba(120,80,50,0.3)] border-[10px] border-white p-5 flex flex-col justify-between items-center text-center opacity-0 z-25 transition-all duration-1000">
+        <div id="blessingCard" class="hidden absolute inset-0 paper-texture rounded-2xl shadow-[0_25px_60px_rgba(120,80,50,0.3)] border-[10px] border-white p-5 flex flex-col justify-between items-center text-center opacity-0 z-25 transition-all duration-1000">
             
             <div class="absolute top-2 left-2 text-amber-300/60 text-4xl font-serif">"</div>
             <div class="absolute bottom-1 right-3 text-amber-300/60 text-4xl font-serif">"</div>
@@ -313,7 +324,7 @@
             </div>
 
             <!-- Card Content with custom scrollbar -->
-            <div class="w-full flex-grow flex flex-col justify-center z-10 mt-2 overflow-y-auto custom-scrollbar pr-1.5 my-2">
+            <div class="w-full flex-1 flex flex-col justify-center z-10 mt-2 pr-1.5 my-2 custom-scrollbar scrollable-area">
                 <!-- Dynamic Card Heading -->
                 <h3 id="blessingCardTitle" class="text-[18px] font-bold text-[#8c5230] border-b-[2px] border-dashed border-amber-300 pb-2 mb-3.5 handwritten relative w-full text-center">
                     คำอวยพรสุดพิเศษจากใจครู 🎁
@@ -334,57 +345,62 @@
                 <span class="text-lg font-bold text-[#8c5230] handwritten drop-shadow-sm">— จาก... คุณครูของพวกเธอ ❤️</span>
             </div>
         </div>
-    </div>
 
-    <!-- STAGE 2.5: CENTERED UNFOLDING 3D LETTER -->
-    <div id="unfoldingLetter" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[340px] h-[180px] z-50 pointer-events-none opacity-0 stage-transition hidden" style="perspective: 2000px; transform-style: preserve-3d; transform-origin: center center;">
-        <div id="paperContainer" class="w-full h-full flex flex-col justify-between transition-all duration-1000 ease-out relative" style="transform-style: preserve-3d; -webkit-transform-style: preserve-3d;">
+        <!-- STAGE 2.5: CENTERED UNFOLDING 3D LETTER -->
+        <div id="unfoldingLetter" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[180px] z-50 pointer-events-none opacity-0 stage-transition hidden" style="perspective: 2000px; transform-style: preserve-3d; transform-origin: center center;">
+            <div id="paperContainer" class="w-full h-full flex flex-col justify-between transition-all duration-1000 ease-out relative" style="transform-style: preserve-3d; -webkit-transform-style: preserve-3d;">
+                
+                <!-- 1. พับส่วนบน (Top fold) คลี่หงายขึ้นด้านบน -->
+                <div id="foldTop" class="notebook-paper w-full h-[90px] rounded-t-xl border-b border-dashed border-amber-200 px-6 py-4 flex items-center justify-start transition-all duration-1000 cubic-bezier(0.25, 1, 0.5, 1) origin-bottom" style="transform: rotateX(-120deg); backface-visibility: hidden; -webkit-backface-visibility: hidden;">
+                    <div class="paper-content-fade">
+                        <h2 class="text-[17px] font-bold text-[#8c5230] handwritten flex items-center gap-2 border-l-2 border-red-400 pl-4 ml-6">
+                            <span class="text-xl">✍️</span> ถึง... นักเรียนคนเก่งของครูทุกคน
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- 2. MIDDLE SECTION -->
+                <div id="foldMiddle" class="notebook-paper w-full h-[210px] px-6 py-4 flex flex-col justify-center shadow-md relative z-10" style="backface-visibility: hidden; -webkit-backface-visibility: hidden;">
+                    <!-- [FIX] มอบความสามารถในการรูดและปัดสัมผัส (pan-y) บน iOS ด้วยคลาส .scrollable-area เพื่อให้เลื่อนอ่านได้ 100% -->
+                    <div class="paper-content-fade text-[#5c4d44] text-[12.5px] leading-[1.75] space-y-3 handwritten text-left font-medium border-l-2 border-red-400 pl-4 ml-6 custom-scrollbar max-h-[190px] pr-1 scrollable-area">
+                        <p class="indent-6">ขอบคุณทุกคนมากนะ ที่ช่วยกันทำให้การเรียนครั้งนี้ผ่านไปได้ด้วยดี</p>
+                        <p class="indent-6">บางครั้งอาจมีทั้งวันที่สนุก วันที่ง่วง วันที่เหนื่อย หรือวันที่ไม่อยากเรียนเลย แต่ทุกคนก็ยังพยายามมาเรียน มาเจอกัน และทำหน้าที่ของตัวเองอย่างเต็มที่</p>
+                        <p class="indent-6">ครูอาจไม่ได้พูดบ่อย แต่ครูเห็นความตั้งใจของทุกคนเสมอ และก็ภูมิใจในพัฒนาการของแต่ละคนมาก</p>
+                        <p class="indent-6">ขอบคุณสำหรับความร่วมมือ รอยยิ้ม เสียงหัวเราะ และเรื่องวุ่น ๆ เล็ก ๆ น้อย ๆ ที่ทำให้ห้องเรียนมีชีวิตชีวา 😊</p>
+                    </div>
+                    <!-- Crease shadows -->
+                    <div class="absolute top-0 inset-x-0 h-[2px] bg-black/5 shadow-[0_1px_4px_rgba(0,0,0,0.05)]"></div>
+                    <div class="absolute bottom-0 inset-x-0 h-[2px] bg-black/5 shadow-[0_-1px_4px_rgba(0,0,0,0.05)]"></div>
+                </div>
+
+                <!-- 3. BOTTOM FOLD -->
+                <div id="foldBottom" class="notebook-paper w-full h-[90px] rounded-b-xl border-t border-dashed border-amber-200 px-6 py-4 flex items-center justify-start transition-all duration-1000 cubic-bezier(0.25, 1, 0.5, 1) origin-top" style="transform: rotateX(120deg); backface-visibility: hidden; -webkit-backface-visibility: hidden;">
+                    <div class="paper-content-fade w-full flex justify-between items-center border-l-2 border-red-400 pl-4 ml-6">
+                        <p class="text-amber-700 font-bold text-left handwritten text-[14.5px] leading-relaxed">
+                            ขอให้ทุกคนเก็บความตั้งใจนี้ไว้ และค่อย ๆ เติบโตในแบบของตัวเองนะ 🌱💖
+                        </p>
+                    </div>
+                </div>
+            </div>
             
-            <!-- 1. พับส่วนบน (Top fold) คลี่หงายขึ้นด้านบน -->
-            <div id="foldTop" class="notebook-paper w-full h-[90px] rounded-t-xl border-b border-dashed border-amber-200 px-6 py-4 flex items-center justify-start transition-all duration-1000 cubic-bezier(0.25, 1, 0.5, 1) origin-bottom" style="transform: rotateX(-120deg); backface-visibility: hidden; -webkit-backface-visibility: hidden;">
-                <div class="paper-content-fade">
-                    <h2 class="text-[17px] font-bold text-[#8c5230] handwritten flex items-center gap-2 border-l-2 border-red-400 pl-4 ml-6">
-                        <span class="text-xl">✍️</span> ถึง... นักเรียนคนเก่งของครูทุกคน
-                    </h2>
-                </div>
-            </div>
-
-            <!-- 2. MIDDLE SECTION -->
-            <div id="foldMiddle" class="notebook-paper w-full h-[210px] px-6 py-4 flex flex-col justify-center shadow-md relative z-10" style="backface-visibility: hidden; -webkit-backface-visibility: hidden;">
-                <div class="paper-content-fade text-[#5c4d44] text-[12.5px] leading-[1.75] space-y-3 handwritten text-left font-medium border-l-2 border-red-400 pl-4 ml-6 overflow-y-auto custom-scrollbar max-h-[190px] pr-1">
-                    <p class="indent-6">ขอบคุณทุกคนมากนะ ที่ช่วยกันทำให้การเรียนครั้งนี้ผ่านไปได้ด้วยดี</p>
-                    <p class="indent-6">บางครั้งอาจมีทั้งวันที่สนุก วันที่ง่วง วันที่เหนื่อย หรือวันที่ไม่อยากเรียนเลย แต่ทุกคนก็ยังพยายามมาเรียน มาเจอกัน และทำหน้าที่ของตัวเองอย่างเต็มที่</p>
-                    <p class="indent-6">ครูอาจไม่ได้พูดบ่อย แต่ครูเห็นความตั้งใจของทุกคนเสมอ และก็ภูมิใจในพัฒนาการของแต่ละคนมาก</p>
-                    <p class="indent-6">ขอบคุณสำหรับความร่วมมือ รอยยิ้ม เสียงหัวเราะ และเรื่องวุ่น ๆ เล็ก ๆ น้อย ๆ ที่ทำให้ห้องเรียนมีชีวิตชีวา 😊</p>
-                </div>
-                <!-- Crease shadows -->
-                <div class="absolute top-0 inset-x-0 h-[2px] bg-black/5 shadow-[0_1px_4px_rgba(0,0,0,0.05)]"></div>
-                <div class="absolute bottom-0 inset-x-0 h-[2px] bg-black/5 shadow-[0_-1px_4px_rgba(0,0,0,0.05)]"></div>
-            </div>
-
-            <!-- 3. BOTTOM FOLD -->
-            <div id="foldBottom" class="notebook-paper w-full h-[90px] rounded-b-xl border-t border-dashed border-amber-200 px-6 py-4 flex items-center justify-start transition-all duration-1000 cubic-bezier(0.25, 1, 0.5, 1) origin-top" style="transform: rotateX(120deg); backface-visibility: hidden; -webkit-backface-visibility: hidden;">
-                <div class="paper-content-fade w-full flex justify-between items-center border-l-2 border-red-400 pl-4 ml-6">
-                    <p class="text-amber-700 font-bold text-left handwritten text-[14.5px] leading-relaxed">
-                        ขอให้ทุกคนเก็บความตั้งใจนี้ไว้ และค่อย ๆ เติบโตในแบบของตัวเองนะ 🌱💖
-                    </p>
-                </div>
-            </div>
+            <!-- Send Magic Energy Button -->
+            <button id="sendEnergyBtn" class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-gradient-to-r from-rose-400 to-amber-500 hover:from-rose-500 hover:to-amber-600 text-white font-bold rounded-full shadow-lg border-2 border-white hover:scale-105 transition-all duration-300 handwritten flex items-center gap-2 pointer-events-auto pulse-glow opacity-0 translate-y-4">
+                <span>✨</span> ส่งรักกลับครู & ไปต่อกันเลย
+            </button>
         </div>
-        
-        <!-- Send Magic Energy Button -->
-        <button id="sendEnergyBtn" class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-gradient-to-r from-rose-400 to-amber-500 hover:from-rose-500 hover:to-amber-600 text-white font-bold rounded-full shadow-lg border-2 border-white hover:scale-105 transition-all duration-300 handwritten flex items-center gap-2 pointer-events-auto pulse-glow opacity-0 translate-y-4">
-            <span>✨</span> ส่งรักกลับครู & ไปต่อกันเลย
-        </button>
+
+        <!-- แผ่นกระจกเบลอเน้นโฟกัสสำหรับจดหมายแผ่นพับ 3D -->
+        <div id="overlayBackdrop" class="fixed inset-0 bg-stone-950/50 backdrop-blur-md z-40 transition-opacity duration-1000 opacity-0 pointer-events-none"></div>
+
     </div>
+    <!-- -------------------------------------------------------------------------------- -->
+    <!-- จบ ASPECT-RATIO SAFE BOX CONTAINER -->
+    <!-- -------------------------------------------------------------------------------- -->
 
-    <!-- MAGIC BACKDROP OVERLAY FOR FOCUS -->
-    <div id="overlayBackdrop" class="fixed inset-0 bg-stone-950/50 backdrop-blur-md z-40 transition-opacity duration-1000 opacity-0 pointer-events-none"></div>
-
-    <!-- OVERLAY SECRET MESSAGE -->
+    <!-- หน้าต่างป๊อปอัปความลับสุดท้ายยามกดปุ่ม P.S. พร้อมฝนพลูหัวใจหลากสี -->
     <div id="secretOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-md z-50 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-500">
-        <div class="w-[320px] max-h-[85vh] bg-white rounded-3xl p-8 text-center shadow-[0_0_50px_rgba(255,100,150,0.4)] relative border-[6px] border-rose-100 overflow-y-auto custom-scrollbar">
-            <!-- Close button -->
+        <div class="w-[320px] max-h-[85vh] bg-white rounded-3xl p-8 text-center shadow-[0_0_50px_rgba(255,100,150,0.4)] relative border-[6px] border-rose-100 overflow-y-auto custom-scrollbar scrollable-area">
+            <!-- ปุ่มกากบาทปิดโมดอล -->
             <button id="closeSecretBtn" class="absolute top-3 right-4 text-gray-400 hover:text-rose-500 text-2xl font-bold">&times;</button>
             
             <div class="text-5xl mb-4 animate-bounce">🥺💖</div>
@@ -449,11 +465,25 @@
         let selectedStarType = "";
         let autoTransitionTimeout;
 
-        // [MUSIC UPGRADE] ดึงไฟล์เพลงตรงจาก Dropbox และปรับระดับความดัง Volume = 0.15 ให้เสียงคลอเบาๆ
-        const bgMusic = new Audio("https://www.dropbox.com/scl/fi/yiy23fsnrlf9wipd5j4n7/starlost.-PURPEECH.mp3?rlkey=l5xipmlxispppbxtt87eey7fv&st=uqzdtw9a&dl=1");
+        // [MUSIC UPGRADE] ดึงไฟล์สตรีมมิ่งตรงจาก dl.dropboxusercontent.com เพื่อให้เล่นบน iOS / Android ได้ทันที 100%
+        const bgMusic = new Audio("https://dl.dropboxusercontent.com/scl/fi/yiy23fsnrlf9wipd5j4n7/starlost.-PURPEECH.mp3?rlkey=l5xipmlxispppbxtt87eey7fv");
         bgMusic.loop = true; 
-        bgMusic.volume = 0.15; // ระดับความเบาคลอนุ่มลึก ฟังสบายอบอุ่นใจ
+        bgMusic.volume = 0.15; // ระดับความดังให้อุ่นๆ คลอเบาๆ แสนฟังสบายไม่ดังรบกวนหู
+        bgMusic.preload = "auto";
         let isMusicPlaying = false;
+
+        // ฟังก์ชันปลดล็อกเสียงเว็บบนเบราว์เซอร์มือถือ (Mobile Safety Audio Unlocker)
+        let hasUnlockedAudio = false;
+        function unlockAudioOnMobile() {
+            if (hasUnlockedAudio) return;
+            bgMusic.play().then(() => {
+                bgMusic.pause(); // แตะสุ่มปลดล็อกแล้วหยุดไว้รอจังหวะแกะของขวัญ
+                bgMusic.currentTime = 0;
+                hasUnlockedAudio = true;
+            }).catch(err => console.log("Audio silent unlocker bypass: ", err));
+        }
+        document.body.addEventListener('touchstart', unlockAudioOnMobile, { once: true });
+        document.body.addEventListener('click', unlockAudioOnMobile, { once: true });
 
         function startMusic() {
             if (!isMusicPlaying) {
@@ -515,29 +545,27 @@
             <p class="indent-6 font-bold text-rose-600">ขอให้เส้นทางข้างหน้าพาพวกเธอไปพบกับสิ่งที่งดงาม และเมื่อวันหนึ่งหันกลับมามอง ขอให้ภูมิใจในตัวเองที่ผ่านทุกเรื่องราวมาได้อย่างเข้มแข็งนะ 🌟🌸</p>
         `;
 
-        // สเกลสัดส่วนแอนิเมชันสำหรับพับกระดาษและซองจดหมายป้องกันบั๊กจอเล็กล้น
+        // ----------------------------------------------------------------------------------
+        // [FIX] สถาปัตยกรรมขยายสเกลแบบรักษาสัดส่วนสมบูรณ์ (Aspect-Ratio Safe Box Auto Scaling)
+        // ----------------------------------------------------------------------------------
         function adjustLayoutScales() {
             const screenWidth = window.innerWidth;
             const screenHeight = window.innerHeight;
             
-            const envelopeEl = document.getElementById('envelope');
-            if (envelopeEl) {
-                const scaleW = Math.min(1, (screenWidth - 32) / 340);
-                const scaleH = Math.min(1, (screenHeight - 160) / 220);
-                const envelopeScale = Math.min(scaleW, scaleH);
-                envelopeEl.style.transform = `scale(${envelopeScale})`;
-            }
-
-            const unfoldingEl = document.getElementById('unfoldingLetter');
-            if (unfoldingEl) {
-                const scaleW = Math.min(1, (screenWidth - 24) / 340);
-                const scaleH = Math.min(1, (screenHeight - 140) / 390);
-                const letterScale = Math.max(0.75, Math.min(scaleW, scaleH));
-                unfoldingEl.style.transform = `translate(-50%, -50%) scale(${letterScale})`;
+            const appContainer = document.getElementById('appContainer');
+            if (appContainer) {
+                // คำนวณอัตราส่วนขยายที่เหมาะสมที่สุด ป้องกันล้นขอบจอทั้งกว้างและสูง และเว้นระยะขอบสปอยล์ 12px
+                const scaleW = (screenWidth - 24) / 360;
+                const scaleH = (screenHeight - 24) / 640;
+                const unifiedScale = Math.min(scaleW, scaleH);
+                
+                // ใช้คำสั่ง Scale ที่รักษาความสมมาตร 100% บนมือถือ แท็บเล็ต และคอมพิวเตอร์
+                appContainer.style.transform = `scale(${unifiedScale})`;
             }
         }
         window.addEventListener('resize', adjustLayoutScales);
-        adjustLayoutScales();
+        window.addEventListener('DOMContentLoaded', adjustLayoutScales);
+        adjustLayoutScales(); // เรียกใช้ครั้งแรกเพื่อจัดระเบียบสัดส่วนทันที
 
         function initFireflies() {
             for (let i = 0; i < 22; i++) {
@@ -644,7 +672,7 @@
         lottieIntro.addEventListener('click', (e) => {
             e.stopPropagation();
             
-            // เริ่มบรรเลงเพลงจริงที่ส่งมาเมื่อเเตะแกะกล่องครั้งแรก
+            // เริ่มบรรเลงเพลงจริงเมื่อกดแกะกล่องครั้งแรก
             startMusic(); 
             musicToggleBtn.classList.remove('hidden'); 
             
@@ -665,7 +693,6 @@
                 
                 headerSubtitle.innerHTML = "มีจดหมายจากครูส่งตรงถึงพวกเธอนะ แตะหัวใจเพื่อเปิดอ่านสิ ✉️";
                 headerSubtitle.classList.add('pulse-glow', 'border', 'border-amber-200');
-                adjustLayoutScales();
             }, 600);
         });
 
@@ -710,8 +737,6 @@
                     sendEnergyBtn.classList.remove('opacity-0', 'translate-y-4');
                     sendEnergyBtn.classList.add('opacity-100', 'translate-y-0');
                 }, 1200);
-                
-                adjustLayoutScales();
             }, 1200);
         }
 
@@ -747,7 +772,6 @@
                 void reflectionChamber.offsetWidth;
                 reflectionChamber.classList.remove('scale-95', 'opacity-0');
                 reflectionChamber.classList.add('scale-100', 'opacity-100');
-                adjustLayoutScales();
             }, 600);
         });
 
@@ -811,8 +835,6 @@
                 void transitionChamber.offsetWidth;
                 transitionChamber.classList.remove('scale-95', 'opacity-0');
                 transitionChamber.classList.add('scale-100', 'opacity-100');
-                
-                adjustLayoutScales();
 
                 autoTransitionTimeout = setTimeout(() => {
                     triggerFinalBlessing();
@@ -879,8 +901,6 @@
                 void blessingCard.offsetWidth;
                 blessingCard.classList.remove('opacity-0');
                 blessingCard.classList.add('opacity-100');
-                
-                adjustLayoutScales();
                 
                 for(let i=0; i<15; i++) {
                     setTimeout(() => {
