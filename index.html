@@ -8,7 +8,951 @@
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
     <link href="https://fonts.googleapis.com/css2?family=Itim&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <style><!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>แด่นักเรียนคนเก่งของครู 🤍</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: radial-gradient(circle at 50% 30%, #fffbf2 0%, #fbe6d4 40%, #e8b099 100%);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            touch-action: manipulation;
+        }
+        
+        .handwritten {
+            font-family: 'Itim', cursive;
+        }
+        
+        /* Main wrapper: full screen centered */
+        #appWrapper {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        /* Stage container: all stages share this space */
+        #stageContainer {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ---- ENVELOPE ---- */
+        .perspective-container { perspective: 1200px; }
+
+        .envelope {
+            position: relative;
+            background: linear-gradient(to bottom right, #f5e6ca, #ebd7b2);
+            box-shadow: 0 20px 40px rgba(160, 125, 95, 0.4), inset 0 0 30px rgba(255,255,255,0.5);
+            transition: transform 0.3s ease;
+            transform-style: preserve-3d;
+            width: 300px;
+            height: 195px;
+            border-radius: 0 0 12px 12px;
+            cursor: pointer;
+        }
+        
+        @media (min-width: 380px) {
+            .envelope { width: 340px; height: 220px; }
+        }
+
+        .envelope-flap {
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 110px solid #e5d2b7;
+            transform-origin: top;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 30;
+        }
+        
+        @media (min-width: 380px) {
+            .envelope-flap {
+                border-left-width: 170px;
+                border-right-width: 170px;
+                border-top-width: 125px;
+            }
+        }
+        
+        .envelope.is-open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 5;
+        }
+        .envelope-front-left {
+            border-left: 150px solid #ebdcb2;
+            border-top: 97px solid transparent;
+            border-bottom: 97px solid transparent;
+        }
+        .envelope-front-right {
+            border-right: 150px solid #e3cca0;
+            border-top: 97px solid transparent;
+            border-bottom: 97px solid transparent;
+        }
+        @media (min-width: 380px) {
+            .envelope-front-left { border-left-width: 170px; border-top-width: 110px; border-bottom-width: 110px; }
+            .envelope-front-right { border-right-width: 170px; border-top-width: 110px; border-bottom-width: 110px; }
+        }
+        .envelope-front-bottom {
+            border-bottom: 115px solid #edd9af;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+        }
+        @media (min-width: 380px) {
+            .envelope-front-bottom { border-bottom-width: 130px; border-left-width: 170px; border-right-width: 170px; }
+        }
+        
+        /* ---- NOTEBOOK PAPER ---- */
+        .notebook-paper {
+            background-color: #fffdf9;
+            background-image: 
+                linear-gradient(90deg, transparent 44px, #ffccd5 45px, #ffccd5 46px, transparent 47px),
+                repeating-linear-gradient(#fffdf9, #fffdf9 27px, #eef5fc 28px);
+            background-size: 100% 100%, 100% 28px;
+            box-shadow: 0 10px 25px rgba(120,90,70,0.1);
+        }
+
+        /* ---- UNFOLDING LETTER ---- */
+        #unfoldingLetter {
+            width: 100%;
+            max-width: 340px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #foldTop {
+            transform-origin: bottom;
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: rotateX(-120deg);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        
+        #foldBottom {
+            transform-origin: top;
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: rotateX(120deg);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .paper-content-fade {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out 0.9s;
+        }
+        .is-unfolded .paper-content-fade {
+            opacity: 1;
+        }
+        
+        /* ---- STAR CARDS ---- */
+        .star-card {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 2px solid rgba(253, 230, 138, 0.4);
+        }
+        .star-card:active, .star-card:hover {
+            transform: translateY(-3px) scale(1.01);
+            border-color: #f59e0b;
+        }
+        .star-card.selected {
+            background: linear-gradient(135deg, #fffcf0 0%, #fef3c7 100%);
+            border-color: #d97706;
+            box-shadow: 0 10px 20px rgba(217, 119, 6, 0.15);
+        }
+
+        /* ---- PAPER TEXTURE ---- */
+        .paper-texture {
+            background-color: #fffaf0;
+        }
+
+        /* ---- PARTICLES ---- */
+        .physics-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: particleMove var(--p-duration) cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+        @keyframes particleMove {
+            0%   { transform: translate(0, 0) scale(0.3) rotate(0deg); opacity: 1; }
+            50%  { opacity: 1; }
+            100% { transform: translate(var(--p-tx), var(--p-ty)) scale(var(--p-scale)) rotate(var(--p-rot)); opacity: 0; }
+        }
+
+        /* ---- GLOW PULSE ---- */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.8; box-shadow: 0 0 0 0 rgba(251,146,60,0.4); }
+            50%       { opacity: 1;   box-shadow: 0 0 20px 6px rgba(251,146,60,0.2); }
+        }
+        .pulse-glow { animation: pulseGlow 2s infinite ease-in-out; }
+
+        /* ---- SCROLLBAR ---- */
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(140,106,92,0.05); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(244,63,94,0.25); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(244,63,94,0.4); }
+
+        /* ---- OVERLAY ---- */
+        #overlayBackdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15,10,5,0.5);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        #overlayBackdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ---- MUSIC BUTTON ---- */
+        #musicToggleBtn {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid #fde68a;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            z-index: 100;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #musicToggleBtn:active { transform: scale(0.92); }
+        #musicToggleBtn.visible { display: flex; }
+
+        /* ---- BLESSING CARD ---- */
+        #blessingCard {
+            width: 100%;
+            max-width: 380px;
+            border: 10px solid white;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(120,80,50,0.25);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* ---- SECRET OVERLAY ---- */
+        #secretOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        #secretOverlay.open {
+            display: flex;
+        }
+
+        /* ---- AMBIENT BLOBS ---- */
+        .blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            mix-blend-mode: multiply;
+        }
+
+        /* ---- FIREFLY ---- */
+        @keyframes fireflyFloat {
+            0%   { transform: translate(0,0) scale(1); opacity: 0.1; }
+            50%  { opacity: 0.7; }
+            100% { transform: translate(var(--fx), var(--fy)) scale(0.8); opacity: 0.1; }
+        }
+        
+        /* Stage visibility */
+        .stage { display: none; }
+        .stage.active { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        
+        /* Transitions */
+        .fade-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .fade-out {
+            animation: fadeOut 0.4s ease forwards;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to   { opacity: 0; transform: scale(0.93); }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Ambient background blobs -->
+    <div class="blob w-[60vw] h-[60vw] bg-rose-200/40 -top-24 -left-12" style="position:fixed;"></div>
+    <div class="blob w-[70vw] h-[70vw] bg-amber-300/30 -bottom-24 -right-24" style="position:fixed;"></div>
+    
+    <!-- Fireflies container -->
+    <div id="firefliesContainer" style="position:fixed;inset:0;pointer-events:none;z-index:1;"></div>
+
+    <!-- Music button -->
+    <button id="musicToggleBtn" aria-label="เปิด/ปิดเพลง">🔊</button>
+
+    <!-- Overlay backdrop (for letter reading focus) -->
+    <div id="overlayBackdrop"></div>
+
+    <!-- Main App Wrapper -->
+    <div id="appWrapper">
+        <!-- Header -->
+        <div id="greetingHeader" class="text-center mb-5 relative z-10 w-full max-w-sm px-2">
+            <span class="inline-block bg-white/80 backdrop-blur-sm border border-amber-200/80 text-amber-700 text-[10px] md:text-xs px-4 py-1.5 rounded-full font-bold tracking-wider shadow-sm uppercase mb-2">
+                To My Brilliant Students 🌻
+            </span>
+            <h1 class="text-2xl md:text-3xl font-bold text-amber-950 mt-1 handwritten drop-shadow-md">แด่... นักเรียนคนสำคัญของครู</h1>
+            <p id="headerSubtitle" class="text-xs md:text-sm text-amber-900/80 mt-2 font-medium bg-white/50 inline-block px-3 py-1.5 rounded-full shadow-sm">มีกล่องของขวัญรอพวกเธอเปิดอยู่นะครับ 🎁</p>
+        </div>
+
+        <!-- Stage Container -->
+        <div id="stageContainer">
+
+            <!-- ═══════════════════════════════════════
+                 STAGE 0: Gift Box Lottie Intro
+            ════════════════════════════════════════ -->
+            <div id="stage0" class="stage active z-10">
+                <div id="lottieIntro" class="flex flex-col items-center cursor-pointer relative" style="touch-action:manipulation;">
+                    <dotlottie-wc 
+                        src="https://lottie.host/ac8c161c-1bbb-415a-8cdd-b82faf28e26b/56ZrR4WlUq.lottie" 
+                        style="width:260px;height:260px" autoplay loop>
+                    </dotlottie-wc>
+                    <div class="mt-2 px-5 py-2.5 bg-white/95 backdrop-blur-md border-2 border-amber-300 rounded-full text-[#8c5230] font-bold handwritten flex items-center gap-2 shadow-xl pulse-glow text-sm">
+                        <span>👆</span> กดเพื่อเปิดแกะของขวัญกันเลย!
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════
+                 STAGE 1: Envelope
+            ════════════════════════════════════════ -->
+            <div id="stage1" class="stage z-10">
+                <div class="perspective-container flex items-center justify-center" style="min-height:240px;">
+                    <div id="envelope" class="envelope cursor-pointer flex items-center justify-center" style="touch-action:manipulation;">
+                        
+                        <!-- Flap -->
+                        <div class="envelope-flap absolute top-0 left-0 w-0 h-0 z-30"></div>
+                        
+                        <!-- Body bg -->
+                        <div class="absolute inset-0 bg-[#dac19c] rounded-b-xl overflow-hidden z-0">
+                            <div class="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/10 to-transparent"></div>
+                        </div>
+
+                        <!-- Peek letter -->
+                        <div id="dummyLetter" class="absolute bottom-2 left-3 right-3 h-[180px] rounded-t-md bg-[#fffdf9] shadow-inner z-10 border border-amber-100/50 flex flex-col items-center justify-center p-4 transition-all duration-700">
+                            <div class="w-full h-1 bg-amber-200/40 my-1 rounded"></div>
+                            <div class="w-2/3 h-1 bg-amber-200/40 my-1 rounded"></div>
+                            <div class="w-4/5 h-1 bg-amber-200/30 my-1 rounded"></div>
+                        </div>
+
+                        <!-- Side folds -->
+                        <div class="envelope-front-left absolute top-0 left-0 w-0 h-0 z-20"></div>
+                        <div class="envelope-front-right absolute top-0 right-0 w-0 h-0 z-20"></div>
+                        <div class="envelope-front-bottom absolute bottom-0 left-0 w-0 h-0 z-20"></div>
+
+                        <!-- Wax seal -->
+                        <div id="waxSeal" class="absolute w-14 h-14 bg-gradient-to-br from-red-500 to-rose-700 rounded-full shadow-lg z-40 flex items-center justify-center border-[3px] border-[#e83e60] cursor-pointer" style="touch-action:manipulation;">
+                            <span class="text-white text-2xl">❤️</span>
+                            <span class="absolute inset-0 rounded-full bg-rose-300 opacity-40 animate-ping"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════
+                 STAGE 2: Unfolding Letter
+            ════════════════════════════════════════ -->
+            <div id="stage2" class="stage z-50">
+                <div id="unfoldingLetter" style="perspective:1200px; transform-style:preserve-3d;">
+                    
+                    <!-- Top fold -->
+                    <div id="foldTop" class="notebook-paper w-full rounded-t-xl border-b border-dashed border-amber-200 px-5 py-4" style="min-height:80px;">
+                        <div class="paper-content-fade border-l-2 border-red-400 pl-4 ml-4 md:ml-6">
+                            <h2 class="text-base md:text-lg font-bold text-[#8c5230] handwritten flex items-center gap-2">
+                                <span>✍️</span> ถึง... นักเรียนคนเก่งของครูทุกคน
+                            </h2>
+                        </div>
+                    </div>
+
+                    <!-- Middle -->
+                    <div id="foldMiddle" class="notebook-paper w-full px-5 py-4 relative z-10">
+                        <div class="paper-content-fade text-[#5c4d44] text-[13px] md:text-[13.5px] leading-[1.8] space-y-3 handwritten font-medium border-l-2 border-red-400 pl-4 ml-4 md:ml-6">
+                            <p class="indent-4 md:indent-6">ขอบคุณทุกคนมากนะ ที่ช่วยกันทำให้การเรียนครั้งนี้ผ่านไปได้ด้วยดี</p>
+                            <p class="indent-4 md:indent-6">บางครั้งอาจมีทั้งวันที่สนุก วันที่ง่วง วันที่เหนื่อย หรือวันที่ไม่อยากเรียนเลย แต่ทุกคนก็ยังพยายามมาเรียน มาเจอกัน และทำหน้าที่ของตัวเองอย่างเต็มที่</p>
+                            <p class="indent-4 md:indent-6">ครูอาจไม่ได้พูดบ่อย แต่ครูเห็นความตั้งใจของทุกคนเสมอ และก็ภูมิใจในพัฒนาการของแต่ละคนมาก</p>
+                            <p class="indent-4 md:indent-6">ขอบคุณสำหรับความร่วมมือ รอยยิ้ม เสียงหัวเราะ และเรื่องวุ่น ๆ เล็ก ๆ น้อย ๆ ที่ทำให้ห้องเรียนมีชีวิตชีวา 😊</p>
+                        </div>
+                        <div class="absolute top-0 inset-x-0 h-px bg-black/5"></div>
+                        <div class="absolute bottom-0 inset-x-0 h-px bg-black/5"></div>
+                    </div>
+
+                    <!-- Bottom fold -->
+                    <div id="foldBottom" class="notebook-paper w-full rounded-b-xl border-t border-dashed border-amber-200 px-5 py-4">
+                        <div class="paper-content-fade border-l-2 border-red-400 pl-4 ml-4 md:ml-6">
+                            <p class="text-amber-700 font-bold handwritten text-[13px] md:text-sm leading-relaxed">
+                                ขอให้ทุกคนเก็บความตั้งใจนี้ไว้ และค่อย ๆ เติบโตในแบบของตัวเองนะ 🌱💖
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Send Energy Button -->
+                <button id="sendEnergyBtn" class="mt-6 px-6 py-3 bg-gradient-to-r from-rose-400 to-amber-500 text-white font-bold rounded-full shadow-lg border-2 border-white handwritten flex items-center gap-2 pulse-glow text-sm" style="touch-action:manipulation;">
+                    <span>✨</span> ส่งรักกลับครู &amp; ไปต่อกันเลย
+                </button>
+            </div>
+
+            <!-- ═══════════════════════════════════════
+                 STAGE 3: Reflection Cards
+            ════════════════════════════════════════ -->
+            <div id="stage3" class="stage z-10 gap-3 w-full max-w-sm">
+                <p class="text-sm text-center text-amber-950 font-semibold w-full bg-amber-100/60 px-4 py-2.5 rounded-2xl border border-amber-200/60 handwritten shadow-sm">
+                    ลองจิ้มเลือก <span class="text-rose-600 font-bold">"พลังวิเศษประจำตัว"</span> ที่พวกเธอชอบใช้ในห้องเรียนของครูที่สุดดูสิ... 💫
+                </p>
+
+                <div id="starCardsList" class="w-full space-y-2">
+                    <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="smile" style="touch-action:manipulation;">
+                        <div class="text-3xl bg-amber-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner flex-shrink-0">😊</div>
+                        <div class="text-left flex-1">
+                            <h4 class="font-bold text-amber-950 text-sm handwritten">รอยยิ้มและพลังบวก</h4>
+                            <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่ทำให้ห้องเรียนดูมีชีวิตชีวาขึ้น</p>
+                        </div>
+                    </div>
+                    <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="brave" style="touch-action:manipulation;">
+                        <div class="text-3xl bg-rose-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner flex-shrink-0">⚡</div>
+                        <div class="text-left flex-1">
+                            <h4 class="font-bold text-amber-950 text-sm handwritten">ความกล้าแสดงออก</h4>
+                            <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่กล้าพูด กล้าถาม และกล้าลอง</p>
+                        </div>
+                    </div>
+                    <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="warm" style="touch-action:manipulation;">
+                        <div class="text-3xl bg-blue-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner flex-shrink-0">🧸</div>
+                        <div class="text-left flex-1">
+                            <h4 class="font-bold text-amber-950 text-sm handwritten">ความใจดีและใส่ใจคนรอบข้าง</h4>
+                            <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่คอยช่วยเหลือคนอื่นอยู่เสมอ</p>
+                        </div>
+                    </div>
+                    <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="quiet" style="touch-action:manipulation;">
+                        <div class="text-3xl bg-stone-100/75 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner flex-shrink-0">🌙</div>
+                        <div class="text-left flex-1">
+                            <h4 class="font-bold text-amber-950 text-sm handwritten">ความเงียบและความเรียบง่าย</h4>
+                            <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่อาจไม่ได้พูดมาก แต่ตั้งใจอยู่เสมอ</p>
+                        </div>
+                    </div>
+                    <div class="star-card p-3 rounded-2xl cursor-pointer flex items-center gap-3 border" data-star-type="creative" style="touch-action:manipulation;">
+                        <div class="text-3xl bg-purple-100/60 w-11 h-11 rounded-xl flex items-center justify-center shadow-inner flex-shrink-0">🎨</div>
+                        <div class="text-left flex-1">
+                            <h4 class="font-bold text-amber-950 text-sm handwritten">ความคิดสร้างสรรค์</h4>
+                            <p class="text-[11px] text-amber-900/70 handwritten mt-0.5">แด่... คนที่ชอบคิดอะไรไม่เหมือนคนอื่น</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini feedback -->
+                <div id="miniFeedback" class="w-full paper-texture border-2 border-amber-200 rounded-2xl p-4 text-center shadow-sm hidden">
+                    <span class="text-2xl" id="feedbackIcon">⭐</span>
+                    <h5 class="text-base font-bold text-amber-950 mt-1 mb-1 handwritten" id="feedbackTitle">พลังของพวกเธอ</h5>
+                    <p class="text-[13px] text-stone-700 leading-relaxed handwritten text-left px-1" id="feedbackText"></p>
+                </div>
+
+                <!-- Unlock button -->
+                <button id="unlockBlessingBtn" class="hidden w-full py-3 bg-gradient-to-r from-amber-500 via-rose-400 to-amber-500 text-white font-bold rounded-full shadow-lg border-2 border-white handwritten flex items-center justify-center gap-2 pulse-glow text-sm" style="touch-action:manipulation;">
+                    <span>💌</span> เปิดหน้าการ์ดคำอวยพรใบสุดท้าย
+                </button>
+            </div>
+
+            <!-- ═══════════════════════════════════════
+                 STAGE 4: Lottie Transition
+            ════════════════════════════════════════ -->
+            <div id="stage4" class="stage z-10 items-center justify-center gap-4" style="min-height: 300px;">
+                <dotlottie-wc 
+                    src="https://lottie.host/82b55941-8f10-4b09-b1ba-e783d56d9b35/VdqHarJ7ZZ.lottie" 
+                    style="width:220px;height:220px" autoplay loop>
+                </dotlottie-wc>
+                <p class="text-base text-center text-rose-950 font-bold handwritten bg-white/70 px-6 py-2.5 rounded-full shadow-md border border-rose-200 text-[14px] max-w-[280px]">
+                    ✨ กำลังประกอบคำอวยพรจากหัวใจครู... ✨
+                </p>
+                <button id="goToBlessingBtn" class="px-6 py-2.5 bg-gradient-to-r from-rose-400 to-amber-500 text-white font-bold rounded-full shadow-lg border border-white handwritten text-sm flex items-center gap-1" style="touch-action:manipulation;">
+                    <span>แตะเพื่อเปิดการ์ด</span> 🌸
+                </button>
+            </div>
+
+            <!-- ═══════════════════════════════════════
+                 STAGE 5: Blessing Card
+            ════════════════════════════════════════ -->
+            <div id="stage5" class="stage z-10">
+                <div id="blessingCard" class="paper-texture relative w-full max-w-sm">
+                    <div class="absolute top-2 left-2 text-amber-300/50 text-4xl font-serif leading-none">"</div>
+                    <div class="absolute bottom-1 right-3 text-amber-300/50 text-4xl font-serif leading-none">"</div>
+
+                    <div class="flex items-center gap-2 justify-center mb-2 z-10">
+                        <span class="text-3xl animate-bounce">🎓</span>
+                        <span class="text-3xl" style="animation: bounce 2s infinite 0.15s;">✨</span>
+                        <span class="text-3xl" style="animation: bounce 2s infinite 0.3s;">🌻</span>
+                    </div>
+
+                    <h3 id="blessingCardTitle" class="text-[17px] font-bold text-[#8c5230] border-b-2 border-dashed border-amber-300 pb-2 mb-3 handwritten w-full text-center z-10">
+                        คำอวยพรสุดพิเศษจากใจครู 🎁
+                    </h3>
+                    
+                    <div id="blessingCardContent" class="text-[#69564b] text-[13.5px] leading-[1.8] space-y-3 font-medium handwritten text-left px-1 z-10 w-full">
+                    </div>
+
+                    <div id="blessingButtonsContainer" class="w-full flex flex-col items-center mt-3 z-20">
+                    </div>
+
+                    <div class="w-full mt-3 pt-2.5 border-t-2 border-dashed border-amber-200 flex flex-col items-center z-10">
+                        <span class="text-base font-bold text-[#8c5230] handwritten">— จาก... คุณครูของพวกเธอ ❤️</span>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /stageContainer -->
+    </div><!-- /appWrapper -->
+
+    <!-- Secret Overlay (outside appWrapper so it covers everything) -->
+    <div id="secretOverlay">
+        <div class="w-[300px] max-h-[80vh] max-h-[80dvh] bg-white rounded-3xl p-7 text-center shadow-2xl relative border-[5px] border-rose-100 overflow-y-auto custom-scrollbar">
+            <button id="closeSecretBtn" class="absolute top-3 right-4 text-gray-400 text-2xl font-bold leading-none" style="touch-action:manipulation;">&times;</button>
+            <div class="text-5xl mb-3 animate-bounce">🥺💖</div>
+            <h2 class="text-xl font-bold text-rose-600 handwritten mb-3">ความลับก็คือ...</h2>
+            <p class="text-[14px] text-gray-700 handwritten leading-relaxed font-medium">
+                ไม่ว่าในอนาคตพวกเธอจะไปเจอเรื่องยากลำบากแค่ไหน...<br><br>
+                <span class="bg-rose-100 px-2 py-0.5 rounded">อย่าลืมนะว่าครั้งนึงพวกเธอเคยเป็น</span><br>
+                <span class="bg-rose-100 px-2 py-0.5 rounded font-bold text-rose-700 text-base">"ความสดใสที่สุด"</span><br>
+                ในห้องเรียนของครูเลยนะ 🥰<br><br>
+                กอดๆ นะทุกคน สู้ๆ!
+            </p>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ── DOM refs ──────────────────────────────────────────────
+        const stages        = { 0: 'stage0', 1: 'stage1', 2: 'stage2', 3: 'stage3', 4: 'stage4', 5: 'stage5' };
+        const header        = document.getElementById('greetingHeader');
+        const headerSub     = document.getElementById('headerSubtitle');
+        const overlay       = document.getElementById('overlayBackdrop');
+        const musicBtn      = document.getElementById('musicToggleBtn');
+        const secretOverlay = document.getElementById('secretOverlay');
+        const closeSecretBtn= document.getElementById('closeSecretBtn');
+
+        let currentStage = 0;
+        let autoTimer    = null;
+        let isMusicPlaying = false;
+
+        // ── Music ─────────────────────────────────────────────────
+        const bgMusic = new Audio("https://www.dropbox.com/scl/fi/yiy23fsnrlf9wipd5j4n7/starlost.-PURPEECH.mp3?rlkey=l5xipmlxispppbxtt87eey7fv&st=uqzdtw9a&dl=1");
+        bgMusic.loop   = true;
+        bgMusic.volume = 0.15;
+
+        function startMusic() {
+            if (isMusicPlaying) return;
+            bgMusic.play().then(() => {
+                isMusicPlaying = true;
+                musicBtn.textContent = '🔊';
+                musicBtn.style.opacity = '1';
+            }).catch(() => {});
+        }
+
+        musicBtn.addEventListener('click', () => {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                isMusicPlaying = false;
+                musicBtn.textContent = '🔇';
+            } else {
+                startMusic();
+            }
+        });
+
+        // ── Stage switcher ────────────────────────────────────────
+        function goToStage(n) {
+            const current = document.getElementById(stages[currentStage]);
+            const next    = document.getElementById(stages[n]);
+            if (!next) return;
+
+            current.classList.add('fade-out');
+            setTimeout(() => {
+                current.classList.remove('active', 'fade-out');
+                next.classList.add('active', 'fade-in');
+                setTimeout(() => next.classList.remove('fade-in'), 600);
+                currentStage = n;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 380);
+        }
+
+        // ── Particles ─────────────────────────────────────────────
+        const symbols = ['❤️','💖','💝','✨','🌸','💫','🌻','🎈'];
+
+        function spawnParticles(cx, cy, large = false) {
+            const count = large ? 20 : 9;
+            for (let i = 0; i < count; i++) {
+                const p     = document.createElement('div');
+                p.className = 'physics-particle';
+                p.style.left   = cx + 'px';
+                p.style.top    = cy + 'px';
+                p.textContent  = symbols[Math.floor(Math.random() * symbols.length)];
+                p.style.fontSize = large ? (Math.random()*14+18)+'px' : (Math.random()*8+14)+'px';
+                p.style.userSelect = 'none';
+
+                const angle = Math.random() * Math.PI * 2;
+                const dist  = large ? Math.random()*120+50 : Math.random()*70+25;
+                p.style.setProperty('--p-tx', `${Math.cos(angle)*dist}px`);
+                p.style.setProperty('--p-ty', `${Math.sin(angle)*dist + Math.random()*40+15}px`);
+                p.style.setProperty('--p-duration', `${(Math.random()*.5+0.7).toFixed(2)}s`);
+                p.style.setProperty('--p-scale', `${Math.random()*.5+0.7}`);
+                p.style.setProperty('--p-rot', `${Math.random()*160-80}deg`);
+
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1300);
+            }
+        }
+
+        document.body.addEventListener('pointerdown', e => {
+            if (e.target.closest('button, .star-card, #secretOverlay, #lottieIntro, dotlottie-wc')) return;
+            spawnParticles(e.clientX, e.clientY, false);
+        });
+
+        // ── Chime sounds ──────────────────────────────────────────
+        function playChime(type = 'major') {
+            try {
+                const AC  = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return;
+                const ctx = new AC();
+                const now = ctx.currentTime;
+                const freqSets = {
+                    major:  [523.25, 659.25, 783.99, 1046.50],
+                    star:   [659.25, 880.00, 1046.50, 1318.51],
+                    secret: [587.33, 739.99, 880.00, 1174.66, 1479.98]
+                };
+                (freqSets[type] || freqSets.major).forEach((f, i) => {
+                    const osc = ctx.createOscillator();
+                    const g   = ctx.createGain();
+                    osc.type  = i % 2 === 0 ? 'sine' : 'triangle';
+                    osc.frequency.setValueAtTime(f, now + i*.05);
+                    g.gain.setValueAtTime(0, now + i*.05);
+                    g.gain.linearRampToValueAtTime(0.07, now + i*.05 + .03);
+                    g.gain.exponentialRampToValueAtTime(.0001, now + i*.05 + 1.6);
+                    osc.connect(g); g.connect(ctx.destination);
+                    osc.start(now + i*.05);
+                    osc.stop(now + i*.05 + 1.8);
+                });
+            } catch(e) {}
+        }
+
+        // ── Fireflies ─────────────────────────────────────────────
+        const firefliesContainer = document.getElementById('firefliesContainer');
+        for (let i = 0; i < 18; i++) {
+            const p     = document.createElement('div');
+            const size  = Math.random() * 4 + 2;
+            const colors = ['rgba(251,191,36,.35)', 'rgba(254,205,211,.4)', 'rgba(255,255,255,.45)', 'rgba(253,186,116,.35)'];
+            p.style.cssText = `
+                position:absolute;
+                width:${size}px; height:${size}px;
+                background:${colors[Math.floor(Math.random()*colors.length)]};
+                border-radius:50%;
+                left:${Math.random()*100}%;
+                top:${Math.random()*100}%;
+                pointer-events:none;
+                animation: fireflyFloat ${Math.random()*8+10}s infinite alternate ease-in-out;
+                animation-delay: ${Math.random()*5}s;
+                --fx: ${(Math.random()*50-25)}px;
+                --fy: -${Math.random()*80+20}px;
+            `;
+            firefliesContainer.appendChild(p);
+        }
+
+        // ── Data ──────────────────────────────────────────────────
+        const feedbackDetails = {
+            smile: {
+                icon: '☀️', title: 'รอยยิ้มและพลังบวก',
+                text: 'ขอบคุณที่คอยสร้างบรรยากาศดี ๆ ให้คนรอบตัวอยู่เสมอ บางทีแค่รอยยิ้มหรือเสียงหัวเราะของเธอ ก็ช่วยให้วันที่เหนื่อย ๆ ของหลายคนดีขึ้นได้มากกว่าที่คิด ขอให้รักษาความสดใสแบบนี้ไว้ได้นะ ☀️'
+            },
+            brave: {
+                icon: '⚡', title: 'ความกล้าแสดงออก',
+                text: 'ขอบคุณที่ช่วยทำให้ห้องเรียนมีสีสัน ขอให้ความกล้าที่เธอมีวันนี้ พาเธอไปเจอโอกาสใหม่ ๆ และเมื่อต้องตัดสินใจเรื่องสำคัญ ขอให้เชื่อมั่นในตัวเองเหมือนที่เคยเป็น ⚡'
+            },
+            warm: {
+                icon: '🧸', title: 'ความใจดีและใส่ใจคนรอบข้าง',
+                text: 'สิ่งที่เธอทำอาจดูเล็กน้อย แต่มันมีความหมายกับคนที่ได้รับมากกว่าที่คิด ขอให้ความใจดีของเธอกลับมาในรูปแบบของผู้คนดี ๆ ที่จะเข้ามาในชีวิตเช่นกัน 🧸'
+            },
+            quiet: {
+                icon: '🌙', title: 'ความเงียบและความเรียบง่าย',
+                text: 'คนที่เงียบไม่ได้แปลว่าไม่มีตัวตน ครูอยากให้รู้ว่าครูเห็นเธออยู่เสมอ ขอให้มั่นใจในแบบที่ตัวเองเป็น เพราะทุกคนมีคุณค่าในแบบของตัวเองอยู่แล้ว 🌙'
+            },
+            creative: {
+                icon: '🎨', title: 'ความคิดสร้างสรรค์',
+                text: 'ขอบคุณที่ทำให้เราได้เห็นมุมมองใหม่ ๆ อย่ากลัวที่จะคิดต่าง เพราะหลายครั้งสิ่งที่ดูแปลกในวันนี้ อาจกลายเป็นสิ่งที่พิเศษในอนาคต 🎨'
+            }
+        };
+
+        const finalBlessing = `
+            <p class="indent-4 md:indent-6">ถึงนักเรียนทุกคน...</p>
+            <p class="indent-4 md:indent-6">แม้เราจะได้ใช้เวลาร่วมกันเพียงไม่นาน แต่ครูก็ดีใจมากที่ได้รู้จักและมีโอกาสเป็นส่วนหนึ่งของช่วงเวลาหนึ่งในชีวิตของทุกคน</p>
+            <p class="indent-4 md:indent-6">จากนี้ไป พวกเธอคงต้องออกไปเจอกับโลกที่กว้างขึ้น ได้พบทั้งโอกาสใหม่ ๆ และความท้าทายที่ไม่เคยเจอมาก่อน บางวันอาจเป็นวันที่ดีจนอยากจดจำ แต่บางวันก็อาจเป็นวันที่เหนื่อย ผิดหวัง</p>
+            <p class="indent-4 md:indent-6 bg-rose-50/60 p-2.5 rounded-lg border border-rose-100/60">ครูอยากให้รู้ว่า เรื่องเหล่านั้นเป็นส่วนหนึ่งของการเติบโต ไม่มีใครใช้ชีวิตได้สมบูรณ์แบบ และไม่มีใครเข้มแข็งได้ตลอดเวลา</p>
+            <p class="indent-4 md:indent-6">ขอเพียงอย่าหยุดเชื่อมั่นในตัวเอง เมื่อผิดพลาดก็เรียนรู้ เมื่อเหนื่อยก็พัก และเมื่อมีโอกาสก็กล้าที่จะก้าวต่อไป</p>
+            <p class="indent-4 md:indent-6">ขอให้พวกเธอได้พบเจอผู้คนดี ๆ ที่คอยสนับสนุนกัน ได้ทำสิ่งที่รัก และยังคงรักษาความเป็นคนดีเอาไว้ไม่ว่าจะเติบโตไปไกลแค่ไหน</p>
+            <p class="indent-4 md:indent-6">ขอบคุณสำหรับทุกความทรงจำ รอยยิ้ม และช่วงเวลาดี ๆ ที่มอบให้ครู</p>
+            <p class="indent-4 md:indent-6 font-bold text-rose-600">ขอให้เส้นทางข้างหน้าพาพวกเธอไปพบกับสิ่งที่งดงาม และเมื่อวันหนึ่งหันกลับมามอง ขอให้ภูมิใจในตัวเองที่ผ่านทุกเรื่องราวมาได้อย่างเข้มแข็งนะ 🌟🌸</p>
+        `;
+
+        // ── Stage 0 → Stage 1 (Gift box → Envelope) ──────────────
+        document.getElementById('lottieIntro').addEventListener('click', () => {
+            startMusic();
+            musicBtn.classList.add('visible');
+            playChime('star');
+
+            const r = document.getElementById('lottieIntro').getBoundingClientRect();
+            spawnParticles(r.left + r.width/2, r.top + r.height/2, true);
+
+            headerSub.textContent = 'มีจดหมายจากครูส่งตรงถึงพวกเธอนะ แตะหัวใจเพื่อเปิดอ่านสิ ✉️';
+            goToStage(1);
+        });
+
+        // ── Stage 1 → Stage 2 (Envelope → Letter) ────────────────
+        let envelopeOpened = false;
+
+        function openEnvelope() {
+            if (envelopeOpened) return;
+            envelopeOpened = true;
+
+            const seal = document.getElementById('waxSeal');
+            const r    = seal.getBoundingClientRect();
+            spawnParticles(r.left + r.width/2, r.top + r.height/2, true);
+            playChime('major');
+
+            document.getElementById('envelope').classList.add('is-open');
+            document.getElementById('dummyLetter').style.cssText += 'transform:translateY(-90px);opacity:0;';
+
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                goToStage(2);
+
+                // Trigger letter unfold
+                setTimeout(() => {
+                    document.getElementById('unfoldingLetter').classList.add('is-unfolded');
+                    document.getElementById('foldTop').style.transform    = 'rotateX(0deg)';
+                    document.getElementById('foldBottom').style.transform = 'rotateX(0deg)';
+                    playChime('star');
+                    const cw = window.innerWidth / 2, ch = window.innerHeight / 2;
+                    spawnParticles(cw, ch, true);
+                }, 200);
+            }, 1000);
+        }
+
+        document.getElementById('envelope').addEventListener('click', openEnvelope);
+
+        // ── Stage 2 → Stage 3 (Letter → Reflection) ──────────────
+        document.getElementById('sendEnergyBtn').addEventListener('click', () => {
+            playChime('major');
+            const r = document.getElementById('sendEnergyBtn').getBoundingClientRect();
+            spawnParticles(r.left + r.width/2, r.top, true);
+
+            header.style.display = 'none'; // hide header to save space
+            goToStage(3);
+        });
+
+        // ── Stage 3: Star card selection ──────────────────────────
+        const starCards         = document.querySelectorAll('.star-card');
+        const miniFeedback      = document.getElementById('miniFeedback');
+        const feedbackIcon      = document.getElementById('feedbackIcon');
+        const feedbackTitle     = document.getElementById('feedbackTitle');
+        const feedbackText      = document.getElementById('feedbackText');
+        const unlockBlessingBtn = document.getElementById('unlockBlessingBtn');
+
+        starCards.forEach(card => {
+            card.addEventListener('click', () => {
+                starCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+
+                const r = card.getBoundingClientRect();
+                spawnParticles(r.left + r.width/2, r.top + r.height/2, false);
+                playChime('star');
+
+                const type   = card.dataset.starType;
+                const detail = feedbackDetails[type];
+                feedbackIcon.textContent  = detail.icon;
+                feedbackTitle.textContent = detail.title;
+                feedbackText.textContent  = detail.text;
+
+                miniFeedback.classList.remove('hidden');
+                unlockBlessingBtn.classList.remove('hidden');
+
+                // Smooth scroll to feedback
+                setTimeout(() => {
+                    miniFeedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            });
+        });
+
+        // ── Stage 3 → Stage 4 (→ Lottie Transition) ──────────────
+        unlockBlessingBtn.addEventListener('click', () => {
+            playChime('star');
+            const r = unlockBlessingBtn.getBoundingClientRect();
+            spawnParticles(r.left + r.width/2, r.top, true);
+            goToStage(4);
+
+            autoTimer = setTimeout(triggerFinalBlessing, 5000);
+        });
+
+        document.getElementById('goToBlessingBtn').addEventListener('click', () => {
+            clearTimeout(autoTimer);
+            triggerFinalBlessing();
+        });
+
+        // ── Stage 4 → Stage 5 (Final Card - Joke first) ───────────
+        function triggerFinalBlessing() {
+            playChime('secret');
+            const cw = window.innerWidth / 2, ch = window.innerHeight / 2;
+            spawnParticles(cw, ch, true);
+
+            document.getElementById('blessingCardTitle').innerHTML = 'คำอวยพรใบสุดท้ายจากใจครู! 🎁';
+            document.getElementById('blessingCardContent').innerHTML = `
+                <div class="text-center font-bold text-base text-amber-600 mb-2">✨ พรวิเศษ 3 ประการแด่พวกเธอ ✨</div>
+                <div class="space-y-2 text-[13.5px] handwritten">
+                    <p>1. ขอให้พวกเธอ <span class="text-rose-600 font-bold">ไม่มีการบ้านตลอดชีวิต!</span> ✍️</p>
+                    <p>2. ขอให้พวกเธอ <span class="text-rose-600 font-bold">ตื่นสายได้โดยครูไม่เช็คชื่อสาย!</span> ⏰</p>
+                    <p>3. ขอให้พวกเธอ <span class="text-rose-600 font-bold">สอบผ่านทุกวิชาโดยไม่ต้องอ่านหนังสือ!</span> 📖</p>
+                    <div class="text-center mt-2">
+                        <span class="text-rose-500 font-extrabold animate-bounce inline-block">...แฮ่! ล้อเล่นน้าาา 🤪</span>
+                    </div>
+                    <p class="text-center text-xs text-stone-500 mt-2 leading-relaxed">กดปุ่มข้างล่างนี้เพื่ออ่านคำอวยพรของจริงจากใจครูได้เลยนะ!</p>
+                </div>
+            `;
+
+            document.getElementById('blessingButtonsContainer').innerHTML = `
+                <button id="revealRealBtn" class="w-full py-3 bg-gradient-to-r from-rose-400 to-amber-500 text-white font-bold rounded-full shadow-lg border-2 border-white handwritten flex items-center justify-center gap-2 pulse-glow text-sm" style="touch-action:manipulation;">
+                    <span>💌</span> คลี่กระดาษอ่านคำอวยพรของจริง
+                </button>
+            `;
+
+            document.getElementById('revealRealBtn').addEventListener('click', revealRealBlessing);
+            goToStage(5);
+
+            // Burst particles
+            for (let i = 0; i < 12; i++) {
+                setTimeout(() => {
+                    spawnParticles(
+                        window.innerWidth/2 + (Math.random()*200-100),
+                        window.innerHeight/2 + (Math.random()*200-80),
+                        Math.random() > .6
+                    );
+                }, i * 100);
+            }
+        }
+
+        // ── Real Blessing Reveal ──────────────────────────────────
+        let realRevealed = false;
+        function revealRealBlessing() {
+            if (realRevealed) return;
+            realRevealed = true;
+
+            playChime('star');
+            spawnParticles(window.innerWidth/2, window.innerHeight/2, true);
+
+            document.getElementById('blessingCardTitle').innerHTML = 'คำอวยพรสุดพิเศษแด่พวกเธอทุกคน 🤍';
+            document.getElementById('blessingCardContent').innerHTML = finalBlessing;
+
+            document.getElementById('blessingButtonsContainer').innerHTML = `
+                <button id="secretBtn" class="px-6 py-2.5 bg-gradient-to-r from-rose-100 to-amber-100 text-rose-800 text-[13px] rounded-full shadow-md border border-rose-200 font-semibold handwritten flex items-center gap-2 pulse-glow" style="touch-action:manipulation;">
+                    <span>🤫</span> P.S. มีความลับจะบอก... กดสิ
+                </button>
+            `;
+
+            document.getElementById('secretBtn').addEventListener('click', () => {
+                playChime('secret');
+                secretOverlay.classList.add('open');
+                heartRain();
+            });
+
+            for (let i = 0; i < 25; i++) {
+                setTimeout(() => {
+                    spawnParticles(
+                        window.innerWidth/2 + (Math.random()*240-120),
+                        window.innerHeight/2 + (Math.random()*200-80),
+                        Math.random() > .4
+                    );
+                }, i * 55);
+            }
+        }
+
+        // ── Heart Rain ────────────────────────────────────────────
+        function heartRain() {
+            let n = 0;
+            const iv = setInterval(() => {
+                spawnParticles(Math.random() * window.innerWidth, window.innerHeight * 0.8, true);
+                if (++n > 40) clearInterval(iv);
+            }, 80);
+        }
+
+        // ── Close secret overlay ──────────────────────────────────
+        closeSecretBtn.addEventListener('click', () => {
+            secretOverlay.classList.remove('open');
+        });
+        secretOverlay.addEventListener('click', e => {
+            if (e.target === secretOverlay) secretOverlay.classList.remove('open');
+        });
+
+    })();
+    </script>
+</body>
+</html>
         body {
             font-family: 'Prompt', sans-serif;
             background: radial-gradient(circle at 50% 30%, #fffbf2 0%, #fbe6d4 40%, #e8b099 100%);
